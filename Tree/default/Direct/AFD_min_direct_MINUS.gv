@@ -1,0 +1,8 @@
+// AFN
+digraph {
+	rankdir=LR
+	label="AFD minimized direct MINUS"
+	1688050394048 [label=q0 shape=circle]
+	1688050397600 [label=q1 shape=doublecircle]
+	1688050394048 -> 1688050397600 [label="-"]
+}

@@ -1,0 +1,8 @@
+// AFN
+digraph {
+	rankdir=LR
+	label="AFD minimized direct RPAREN"
+	1688051113264 [label=q0 shape=circle]
+	1688051112640 [label=q1 shape=doublecircle]
+	1688051113264 -> 1688051112640 [label=")"]
+}

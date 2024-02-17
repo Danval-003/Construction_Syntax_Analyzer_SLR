@@ -1,0 +1,8 @@
+// AFN
+digraph {
+	rankdir=LR
+	label="AFD minimized direct DIV"
+	1688050389344 [label=q0 shape=circle]
+	1688050397264 [label=q1 shape=doublecircle]
+	1688050389344 -> 1688050397264 [label="/"]
+}

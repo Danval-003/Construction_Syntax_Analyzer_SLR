@@ -1,0 +1,18 @@
+// AFN
+digraph {
+	rankdir=LR
+	label="AFD minimized direct letter"
+	1688050391600 [label=q0 shape=circle]
+	1688050393664 [label=q1 shape=circle]
+	1688050393952 [label=q2 shape=circle]
+	1688050394336 [label=q3 shape=circle]
+	1688050394480 [label=q4 shape=circle]
+	1688050394624 [label=q5 shape=circle]
+	1688050394768 [label=q6 shape=doublecircle]
+	1688050394624 -> 1688050394768 [label=r]
+	1688050394480 -> 1688050394624 [label=e]
+	1688050394336 -> 1688050394480 [label=t]
+	1688050393952 -> 1688050394336 [label=t]
+	1688050393664 -> 1688050393952 [label=e]
+	1688050391600 -> 1688050393664 [label=l]
+}
