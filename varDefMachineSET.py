@@ -176,10 +176,10 @@ a1.add_transition(254, a2)
 a2.add_transition(39, a3)
 
 a3.isFinalState = True
-a3.addToken( 'IND')
+a3.addToken('IND')
 
 b1.isFinalState = True
-b1.addToken( 'OPER')
+b1.addToken('OPER')
 
 c1.add_transition(9, c2)
 c1.add_transition(10, c2)
@@ -502,7 +502,7 @@ c2.add_transition(253, c2)
 c2.add_transition(254, c2)
 
 c3.isFinalState = True
-c3.addToken( 'GROUP')
+c3.addToken('GROUP')
 c3.add_transition(9, c2)
 c3.add_transition(10, c2)
 c3.add_transition(13, c2)

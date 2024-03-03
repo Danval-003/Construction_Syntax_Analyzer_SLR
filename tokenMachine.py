@@ -122,10 +122,10 @@ a9.add_transition(32, a9)
 a9.add_transition(125, a10)
 
 a10.isFinalState = True
-a10.addToken( 'RETURN')
+a10.addToken('RETURN')
 
 b1.isFinalState = True
-b1.addToken( 'TOKEN')
+b1.addToken('TOKEN')
 b1.add_transition(97, b1)
 b1.add_transition(98, b1)
 b1.add_transition(99, b1)
@@ -317,7 +317,7 @@ c1.add_transition(254, c2)
 c2.add_transition(39, c3)
 
 c3.isFinalState = True
-c3.addToken( 'SYMBOL')
+c3.addToken('SYMBOL')
 
 d1.add_transition(9, d2)
 d1.add_transition(10, d2)
@@ -642,7 +642,7 @@ d2.add_transition(253, d2)
 d2.add_transition(254, d2)
 
 d3.isFinalState = True
-d3.addToken( 'SYMBOL')
+d3.addToken('SYMBOL')
 d3.add_transition(9, d2)
 d3.add_transition(10, d2)
 d3.add_transition(13, d2)

@@ -76,6 +76,10 @@ def format_regex(content: List[List[str or int]]) -> List[List[str or int]]:
                 elif str(chNext) not in ')]}+|*' and str(chNext) != '' and str(chNext) != '|' and len(result) > 0:
                     if toRecursion[-1] == '.':
                         toRecursion.pop()
+                    if toRecursion[-1] == '.':
+                        toRecursion.pop()
+                    if toRecursion[-1] == '.':
+                        toRecursion.pop()
                     toRecursion.append(')')
                     toRecursion.append('.')
                 else:
@@ -130,23 +134,17 @@ def format_regex(content: List[List[str or int]]) -> List[List[str or int]]:
         def notListed_(result_):
             for elem_ in result_:
                 if isinstance(elem_, list):
-                    notListed.append('(')
                     notListed_(elem_)
-                    notListed.append(')')
                 else:
                     notListed.append(elem_)
 
         for i in result.copy():
             if isinstance(i, list):
-                notListed.append('(')
                 notListed_(i)
-                notListed.append(')')
             else:
                 notListed.append(i)
 
         notListed = notListed if notListed[-1] != '' else notListed[:-1]
-
-
 
         return notListed
 
@@ -162,9 +160,37 @@ def format_regex(content: List[List[str or int]]) -> List[List[str or int]]:
                     elem.append(')')
                 else:
                     elem.append(element)
-        formatted.append(format_(elem))
 
-    return formatted
+        new_el = format_(elem)
+
+        formatted.append(new_el)
+
+    new_formatted = []
+    for elem in formatted:
+        last = ''
+        lastted = ''
+        elem_ = []
+        for ch in elem:
+            if last == '.' and ch == '.' and lastted == '.':
+                elem_.pop()
+                continue
+
+            if last == '|' and ch == '|' and lastted == '|':
+                elem_.pop()
+                continue
+
+            if last == '.' and ch == '.':
+                continue
+
+            if last == '|' and ch == '|':
+                continue
+            lastted = last
+            last = ch
+            elem_.append(ch)
+        new_formatted.append(elem_)
+
+
+    return new_formatted
 
 
 def translate_to_postfix(content: List[List[str]]) -> List[List[str or int]]:

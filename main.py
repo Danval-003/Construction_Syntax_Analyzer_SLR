@@ -1,4 +1,3 @@
-from Simulator import *
 from prepareAFD import *
 import ErroManagerReaders as err
 from varDefinitios import *
@@ -6,14 +5,12 @@ from Draw_diagrams import *
 
 if __name__ == '__main__':
     """Read the file and return its contents"""
-    contents: str = reader('slr-1.yal').replace(r'\t', '\t').replace(r'\n', '\n').replace(r'\r', '\r').replace(r'\v',
-                                                                                                               '\v').replace(
-        r'\f', '\f').replace('\\s', r'\s')
+    contents: str = reader('slr-4.yal').replace(r'\t', '\t').replace(r'\n', '\n').replace(r'\r', '\r').replace(r'\v','\v').replace(r'\f', '\f')
     regex = {
         'COMMENTARY': ['\(\*([^)]| )*\*\)'],
         'RULES': ['rule *tokens *='],
         'DECLARATIONS': ["let [a-z]+ = *([^=]|['[]*|?.]|' ')+"],
-        'TOKENS': ["([a-z]|'[^a]')+ +\{ *return *[A-Z]+ *\}|([a-z])+", "\| ([a-z]|'[^a]')+ +\{ *return *[A-Z]+ *\}"]
+        'TOKENS': ["([a-z]|'[^a-z]')+ +\{ *return *[A-Z]+ *\}|([a-z])+", "\| ([a-z]|'[^a-z]')+ +\{ *return *[A-Z]+ *\}", '\| ([a-z]|"([^a-z])+")+ +\{ *return *[A-Z]+ *\}']
     }
 
     machine = import_module("yalexReader.py", regex)
@@ -26,6 +23,8 @@ if __name__ == '__main__':
     machineDecl = import_module("declarationReader.py", regex)
 
     principalRead = exclusiveSim(machine, contents)
+
+    print(principalRead)
 
     dictResult, error = err.erroPrincipalReader(principalRead)
 
@@ -55,5 +54,9 @@ if __name__ == '__main__':
                 tokens.append(text)
 
         defToken = defTokens(dVar, tokens)
+        code = translateToCode(defToken, True)
+        with open("out.py", 'w') as fileW:
+            fileW.write(code)
 
         draw_AF(defToken, legend=f'AFD minimized direct', expression='default')
+

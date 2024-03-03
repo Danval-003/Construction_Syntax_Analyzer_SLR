@@ -4,8 +4,13 @@ from Simulator import *
 
 contents = reader('slr-1.yal')
 
-z = prepareAFN({'HOLA': ["[a-b]([a-b]|[0-2])*"]})
+z = prepareAFN({
+        'IN_SET': ["\[([^a]|a|' ')*\]"],
+        'IN_GROUP': ["\( *([^a()]|a)+ *\)"],
+        'OPERATOR': ['\|', '\?', '\*', '^', '\+'],
+        'SYMBOL': ["'[a-zA-Z0-9]'|[^+*?() |]|."]
+    })
 
-draw_AF(z, legend=f'AFD minimized direct {contents[0]}', expression='default', direct=True, name='AFD_min_direct')
+xd = exclusiveSim(z, "digits(.digits)?('E'['+''-']?digits)?")
 
-
+print(xd)

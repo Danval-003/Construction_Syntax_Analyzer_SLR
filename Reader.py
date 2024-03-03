@@ -89,7 +89,6 @@ def transformsChar(contents: List[str]) -> List[List[str or int]]:
         balance = 0
         onQua = ''
         for charIndex in range(len(line)):
-            g = line[charIndex]
             if line[charIndex] in '[' and not escaped:
                 balance += 1
             elif line[charIndex] in ']' and not escaped:

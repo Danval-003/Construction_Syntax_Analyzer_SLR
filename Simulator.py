@@ -73,7 +73,6 @@ def Simulator(states: Dict[str, State], string: str, expression=""):
 def exclusiveSim(initState: State, string: str):
     string += ' '
     paths: List[List[State]] = [[initState]]
-    textToAccept = ''
     listTextTuple: List[Tuple[str, str or int]] = []
     lastPathAccepted: List[Tuple[int, List, int]] = []
 
@@ -101,7 +100,7 @@ def exclusiveSim(initState: State, string: str):
 
         if len(newPaths) == 0:
             if len(lastPathAccepted) == 0:
-                textToAccept = string[lasChIndex:chIndex+1]
+                textToAccept = string[lasChIndex:chIndex + 1]
                 listTextTuple.append((textToAccept, 0 if len(textToAccept) == 0 or textToAccept == ' ' else 1))
                 chIndex += 1
                 lasChIndex = chIndex
@@ -109,7 +108,7 @@ def exclusiveSim(initState: State, string: str):
                 continue
 
             lastChar, lastStateAccepted, _ = lastPathAccepted[0]
-            textToAccept = string[lasChIndex:lastChar+1]
+            textToAccept = string[lasChIndex:lastChar + 1]
             listTextTuple.append((textToAccept, lastStateAccepted[-1].getToken()))
             lasChIndex = lastChar + 1
             chIndex = lastChar + 1
@@ -121,7 +120,8 @@ def exclusiveSim(initState: State, string: str):
 
         for path in newPaths:
             if path[-1].isFinalState:
-                newLastPathAccepted.append((chIndex, path, sum([path[i].numberTransitions() for i in range(len(path))])))
+                newLastPathAccepted.append(
+                    (chIndex, path, sum([path[i].numberTransitions() for i in range(len(path))])))
 
         if len(newLastPathAccepted) > 0:
             lastPathAccepted = sorted(newLastPathAccepted, key=lambda x: x[2])
@@ -129,8 +129,8 @@ def exclusiveSim(initState: State, string: str):
         paths = newPaths
         chIndex += 1
 
-        for line, token in listTextTuple:
-            if token == 1:
-                err.generalError(line, 'Token no reconocido')
+    for line, token in listTextTuple:
+        if token == 1:
+            err.generalError(line, 'Token no reconocido')
 
     return listTextTuple

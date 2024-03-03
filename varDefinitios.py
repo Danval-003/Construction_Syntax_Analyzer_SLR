@@ -7,9 +7,9 @@ from prepareAFD import prepareAFN
 def defVariables(listVar: List[Tuple[str, str]]):
     regex = {
         'IN_SET': ["\[([^a]|a|' ')*\]"],
-        'IN_GROUP': ["\( *(\(([^a()]|a|\?|\+|\*|\+|.|\|)\))*\)"],
+        'IN_GROUP': ["\( *([^a()]|a)+ *\)"],
         'OPERATOR': ['\|', '\?', '\*', '^', '\+'],
-        'SYMBOL': ["'[a-zA-Z0-9]'|[^+*?()|]|."],
+        'SYMBOL': ["'[a-zA-Z0-9]'|[^+*?() |]|."]
     }
 
     regexInSet = {
