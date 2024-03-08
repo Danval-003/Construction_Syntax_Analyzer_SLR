@@ -11,7 +11,7 @@ let id = letter(letter|digit)*
 let number = digits(.digits)?('E'['+''-']?digits)?
 
 rule tokens = 
-    ws        { return WHITESPACE }               (* Cambie por una acción válida, que devuelva el token *)
+    ws        { return WHITESPACE }        (* Cambie por una acción válida, que devuelva el token *)
   | id        { return ID }
   | number    { return NUMBER }
   | '+'       { return PLUS }

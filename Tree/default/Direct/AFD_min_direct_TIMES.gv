@@ -1,8 +1,0 @@
-// AFN
-digraph {
-	rankdir=LR
-	label="AFD minimized direct TIMES"
-	1688050397648 [label=q0 shape=circle]
-	1688050389584 [label=q1 shape=doublecircle]
-	1688050397648 -> 1688050389584 [label="*"]
-}

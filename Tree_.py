@@ -1,3 +1,5 @@
+from typing import Tuple, Dict, Any
+
 from Classes_ import Node
 from typing import *
 
@@ -42,7 +44,7 @@ def make_tree(expression: List[str or int]) -> Node:
     return stack.pop()
 
 
-def make_direct_tree(expression: List[str or int]) -> Tuple[Node, Dict[str, Node]]:
+def make_direct_tree(expression: List[str or int], token='#') -> tuple[Node, dict[Any, Node], Node]:
     expression = expression + ['#', '.']
     nodes: Dict[str or int, Node] = {}
     tree_node = make_tree(expression)
@@ -77,4 +79,7 @@ def make_direct_tree(expression: List[str or int]) -> Tuple[Node, Dict[str, Node
     explore_node(tree_node)
     explore_followPos(tree_node)
 
-    return tree_node, nodes
+    tokenTree = Node(token)
+    tokenTree.left = tree_node
+
+    return tree_node, nodes, tokenTree

@@ -39,4 +39,4 @@ def draw_AF(initState: State, legend: str = 'AF', expression='default', direct=F
 
     draw_state(initState)
 
-    dot.render(name+'.gv', view=True, directory='./Tree/'+expression+'/'+('Direct' if direct else 'Infix'))
+    dot.render(name+'.gv', view=True, directory='./machine/'+expression)

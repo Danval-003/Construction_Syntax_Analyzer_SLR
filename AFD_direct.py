@@ -53,9 +53,10 @@ def minimizeAFD(states2: Dict[str or int, State], alpha: Set[int or str], id_:st
     minimized_states: Dict[str, Tuple[State, ...]] = {id_+'0': initState, id_+'1': finalState}
 
     not_toDo = True
-
+    print(not_toDo, finalState[0].token)
     while not_toDo:
         evaluated = 1
+        print(minimized_states)
         new_minimized_states: Dict[str, Tuple[State, ...]] = dict()
         for subStates in minimized_states:
             transitionsDict: Dict[str, Set[State]] = dict()
@@ -84,11 +85,12 @@ def minimizeAFD(states2: Dict[str or int, State], alpha: Set[int or str], id_:st
                 new_minimized_states[id_ + str(evaluated)] = tuple(transitionsDict[transition_])
                 evaluated += 1
 
-        if new_minimized_states == minimized_states:
+        if len(new_minimized_states) == len(minimized_states):
             not_toDo = False
         else:
             minimized_states = new_minimized_states
 
+    print(not_toDo, finalState[0].token)
     newMin_States: Dict[str, State] = dict()
     initial = ''
     for subStates in minimized_states:

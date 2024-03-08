@@ -2,7 +2,7 @@ import string
 
 
 def globalChars():
-    chars = string.punctuation + string.digits + ''.join(chr(i) for i in range(192, 255)) + string.ascii_uppercase + string.ascii_lowercase + '\t'+ '\n' + '\r'
+    chars = string.punctuation + string.digits + ''.join(chr(i) for i in range(0, 256))
     return chars
 
 

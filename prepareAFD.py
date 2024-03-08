@@ -5,29 +5,73 @@ from AFD_direct import *
 import string
 import os
 import importlib.util
-from Draw_diagrams import draw_AF
+from Draw_diagrams import draw_AF, draw_tree
+import threading
+from queue import Queue
 
 
-def prepareAFN(expressions: Dict[str, List[str]]) -> State:
+def create_mach(token, regex, count, resultQueue: Queue, TreeQueue: Queue):
+    print(f'Creating machine for {token}')
+    parsed: List[List[str or int]] = transformsChar(regex)
+    accepted: List[List[str or int]] = validate(parsed)
+    alphabets: List[Set[int]] = extract_alphabet(accepted)
+    formatted: List[List[str or int]] = format_regex(accepted)
+    postfix: List[str or int] = translate_to_postfix(formatted)
+    tree = make_direct_tree(postfix[0], token=token)
+    TreeQueue.put(tree)
+    direct = make_direct_AFD(tree[0], tree[1], alphabets[0], token)
+    minimize = minimizeAFD(direct[2], alphabets[0], id_=string.ascii_lowercase[count])
+    resultQueue.put(minimize[1])
+
+
+
+def prepareAFN(expressions: Dict[str, List[str]], showTree = False) -> State:
     initState: State or None = None
     cont = 0
+    threads: List[threading.Thread] = []
+    resultQueue = Queue()
+    TreeQueue = Queue()
     for token, regex in expressions.items():
-        parsed: List[List[str or int]] = transformsChar(regex)
-        accepted: List[List[str or int]] = validate(parsed)
-        alphabets: List[Set[int]] = extract_alphabet(accepted)
-        formatted: List[List[str or int]] = format_regex(accepted)
-        postfix: List[str or int] = translate_to_postfix(formatted)
-        for i in range(len(postfix)):
-            tree = make_direct_tree(postfix[i])
-            direct = make_direct_AFD(tree[0], tree[1], alphabets[i], token)
-            minimize = minimizeAFD(direct[2], alphabets[i], id_=string.ascii_lowercase[cont])
-            if initState is None:
-                initState = minimize[1]
-            else:
-                initState.combine_States(minimize[1])
-
+        for i in range(len(regex)):
+            t = threading.Thread(target=create_mach, args=(token, [regex[i]], cont, resultQueue, TreeQueue))
+            threads.append(t)
+            t.start()
             cont += 1
 
+    for t in threads:
+        t.join()
+
+    while not resultQueue.empty():
+        mach = resultQueue.get()
+        if initState is None:
+            initState = mach
+        else:
+            initState.combine_States(mach)
+
+    iniTreeNode:Node = Node('Root')
+    while not TreeQueue.empty():
+        leftTree = TreeQueue.get()
+        if iniTreeNode.left is None:
+            iniTreeNode.left = leftTree[2]
+            if iniTreeNode.right is None and not TreeQueue.empty():
+                iniTreeNode.right = TreeQueue.get()[2]
+                if TreeQueue.empty():
+                    break
+                newInitNode = Node('Root')
+                newInitNode.left = iniTreeNode
+                iniTreeNode = newInitNode
+            continue
+        else:
+            iniTreeNode.right = leftTree[2]
+            if TreeQueue.empty():
+                break
+            newInitNode = Node('Root')
+            newInitNode.left = iniTreeNode
+            iniTreeNode = newInitNode
+
+    if showTree:
+        draw_tree(iniTreeNode, 'default', True)
+    initState.value = 'a0'
     return initState
 
 
@@ -217,7 +261,7 @@ def statesTotla(initState: State) -> str:
     return code
 
 
-def import_module(file, regex):
+def import_module(file, regex, showTree=False):
     if os.path.isfile(file):
         import_module = file.split('.')[0]
         spec = importlib.util.spec_from_file_location(import_module, file)
@@ -225,7 +269,7 @@ def import_module(file, regex):
         spec.loader.exec_module(module)
         a0 = getattr(module, 'a0', None)
     else:
-        a0 = prepareAFN(regex)
+        a0 = prepareAFN(regex, showTree=showTree)
         code = translateToCode(a0)
         with open(file, 'w') as fileW:
             fileW.write(code)

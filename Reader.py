@@ -8,7 +8,7 @@ def reader(filename: str) -> str:
     with open(filename, 'r', encoding='utf-8') as archivo:
         line = archivo.readlines()
         for i in line:
-            contents.append(str(i[:-1]+' ' if i[-1] == '\n' or i[-1] == '' else i))
+            contents.append(str(i[:-1]+' \n ' if i[-1] == '\n' or i[-1] == '' else i))
 
     return ''.join(contents)
 
@@ -73,55 +73,96 @@ def transformsChar(contents: List[str]) -> List[List[str or int]]:
             negSet = negSet.union(totalSet)
             totalSet = set(globalChars()).difference(negSet)
 
-        totalSet = list(totalSet)
-
-        result = []
-        for i in totalSet[:-1]:
-            result.append(ord(i))
-            result.append('|')
-
-        result.append(ord(totalSet[-1]))
-
-        return result, True
+        return totalSet, True
 
     for line in contents:
         transformed.append([])
         balance = 0
         onQua = ''
-        for charIndex in range(len(line)):
+        charIndex = 0
+        seted = set()
+        isDiff = False
+        Error = False
+        while charIndex < len(line):
             if line[charIndex] in '[' and not escaped:
-                balance += 1
-            elif line[charIndex] in ']' and not escaped:
-                balance -= 1
-                if balance == 0:
-                    text, funtion = evalSet(onQua[1:])
-                    if not funtion:
-                        transformed.pop()
-                        break
-                    transformed[-1] = transformed[-1] + ['('] + list(text) + [')']
-                    onQua = ''
-                    continue
+                balance = 1
+                inSet = ''
+                setted = set()
+                funtion = False
+                c_in = 0
+                for b_in in range(charIndex + 1, len(line)):
+                    c_in += 1
+                    if line[b_in] == ']':
+                        balance -= 1
+                        if balance == 0:
+                            setted, funtion = evalSet(inSet)
+                            break
+                    elif line[b_in] == '[':
+                        balance += 1
+                    inSet += line[b_in]
+                if not funtion or balance != 0:
+                    break
 
-            if balance != 0:
-                onQua += line[charIndex]
+                if isDiff:
+                    setted = seted.difference(setted)
+                    isDiff = False
+
+                if charIndex + c_in + 1 < len(line):
+                    if line[charIndex + c_in + 1] == '#':
+                        isDiff = True
+                        charIndex = charIndex + c_in + 2
+                        seted = setted
+                        continue
+
+                if len(setted) > 0:
+                    transformed[-1].append('(')
+                    for element in setted:
+                        transformed[-1].append(ord(element))
+                        transformed[-1].append('|')
+                    transformed[-1].pop()
+                    transformed[-1].append(')')
+                charIndex = charIndex + c_in + 1
                 continue
 
             if line[charIndex] == '\\':
                 if not escaped:
                     escaped = True
+                    charIndex += 1
                     continue
                 else:
                     transformed[-1].append(ord(line[charIndex]))
 
+            if line[charIndex] in '_' and not escaped:
+                transformed[-1].append('(')
+                for chrI in globalChars():
+                    transformed[-1].append(ord(chrI))
+                    transformed[-1].append('|')
+                transformed[-1].pop()
+                transformed[-1].append(')')
+                charIndex += 1
+                continue
+
+            if line[charIndex] == '#' and not escaped:
+                charIndex += 1
+                continue
+
             if line[charIndex] in '({*|?+)}' and not escaped:
                 transformed[-1].append(line[charIndex])
+                charIndex += 1
                 continue
 
             transformed[-1].append(ord(line[charIndex]))
 
             escaped = False
-        if balance != 0:
-            transformed.pop()
+            charIndex += 1
+        if isDiff:
+            if len(setted) > 0:
+                transformed[-1].append('(')
+                for element in setted:
+                    transformed[-1].append(ord(element))
+                    transformed[-1].append('|')
+                transformed[-1].pop()
+                transformed[-1].append(')')
 
     return transformed
 

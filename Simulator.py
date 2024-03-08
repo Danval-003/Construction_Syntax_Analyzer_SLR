@@ -101,7 +101,8 @@ def exclusiveSim(initState: State, string: str):
         if len(newPaths) == 0:
             if len(lastPathAccepted) == 0:
                 textToAccept = string[lasChIndex:chIndex + 1]
-                listTextTuple.append((textToAccept, 0 if len(textToAccept) == 0 or textToAccept == ' ' else 1))
+                listTextTuple.append((textToAccept, 0 if len(textToAccept) == 0 or textToAccept == ' ' or
+                                                         textToAccept == '\n' else 1))
                 chIndex += 1
                 lasChIndex = chIndex
                 paths = [[initState]]
@@ -128,6 +129,32 @@ def exclusiveSim(initState: State, string: str):
 
         paths = newPaths
         chIndex += 1
+
+        if chIndex == len(string):
+            if len(lastPathAccepted) == 0:
+                textToAccept = string[lasChIndex:chIndex + 1]
+                listTextTuple.append((textToAccept, 0 if len(textToAccept) == 0 or textToAccept == ' ' or
+                                                         textToAccept == '\n' else 1))
+                chIndex += 1
+                lasChIndex = chIndex
+                paths = [[initState]]
+                continue
+
+            lastChar, lastStateAccepted, _ = lastPathAccepted[0]
+            textToAccept = string[lasChIndex:lastChar + 1]
+            listTextTuple.append((textToAccept, lastStateAccepted[-1].getToken()))
+            lasChIndex = lastChar + 1
+            chIndex = lastChar + 1
+            paths = [[initState]]
+            lastPathAccepted = []
+            continue
+
+    if listTextTuple[-1][1] == 1:
+        text = listTextTuple[-1][0]
+        listTextTuple.pop()
+        listTextTuple.append((text[:-1], 1))
+        listTextTuple.append((' ', 0))
+
 
     for line, token in listTextTuple:
         if token == 1:
