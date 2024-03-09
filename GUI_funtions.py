@@ -6,9 +6,10 @@ from Simulator import *
 regex = {
     'COMMENTARY': ['\(\* *([^)]| )* *\*\)'],
     'RULES': ['rule *[a-z]+ *='],
-    'DECLARATIONS': ["let +[a-z]+ += *\n*([^\"' \n\t]|'(_| )'|\"(_| )+\")+"],
-    'TOKENS': ["\| ([^ \n\t]|'(_| )'|\"(_| )+\")+ +\{ *return *[A-Z]+ *\}"],
-    'FIRST': ["([^ \n\t]|'(_| )'|\"(_| )+\")+ +\{ *return *[A-Z]+ *\}", "([a-z])+"]
+    'DECLARATIONS': ["let +[a-z]+ += *\n*([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+"],
+    'TOKENS': ["\| *([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+ +\{[^{}]+\}"],
+    'FIRST': ["([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+ +\{[^{}]+\}", "([a-z])+"],
+    'HEADER': ["\{[^{}]+\}"]
 }
 
 machine = import_module("yalexReader2.py", regex)
@@ -19,10 +20,13 @@ total_machines = {}
 
 lastMachine = ''
 isFirst = False
+findHeader = False
+
+orderPy = []
 
 
 def eval_Text(text):
-    global lastMachine, isFirst
+    global lastMachine, isFirst, orderPy, findHeader
     clear()
     # Tu lógica de evaluación aquí
     # Se asume que `exclusiveSim` y `machine` están definidos
@@ -43,11 +47,21 @@ def eval_Text(text):
                 passRules = False
                 isFirst = False
 
+        if token != 1 and token != 0 and token not in ['COMMENTARY', 'HEADER']:
+            findHeader = True
+
         if token == 'DECLARATIONS':
             n = Eval_declaration(message)
             for m, t in n:
                 new_eval.append((m, t))
             continue
+
+        if token == 'HEADER':
+            if not findHeader:
+                head = message[1:-1].split('\n')
+                orderPy += head
+            else:
+                new_eval.append((message, 1))
 
         if token == 'TOKENS':
             n = Eval_tokens(message)
@@ -65,6 +79,7 @@ def eval_Text(text):
                 for m, t in n:
                     new_eval.append((m, t))
                 continue
+
             continue
 
         if token == 'RULES':
@@ -106,7 +121,7 @@ def Eval_declaration(declaration):
     if len(spaces) > 0:
         new_eval.append((spaces[0], 0))
 
-    valEval = eval_Value(nameVar, valueVar)
+    valEval, _ = eval_Value(nameVar, valueVar)
     for message, token in valEval:
         new_eval.append((message, token))
     print(new_eval, 'NEW_EVAL')
@@ -138,13 +153,19 @@ def clear():
     global machineValue
     global machineSet
     global total_machines
+    global findHeader
+    global orderPy
+    global isFirst
+    isFirst = False
+    orderPy = []
+    findHeader = False
     total_machines = {}
     dictVar = {}
     machineValue = import_module("varDefMachine3.py", regex)
     machineSet = import_module("varDefMachineSET2.py", regexInSet)
 
 
-def eval_Value(var, value):
+def eval_Value(var, value, notDo=False):
     global dictVar
     global machineValue
     print(value)
@@ -164,7 +185,7 @@ def eval_Value(var, value):
             for chr in text:
                 if chr == '(':
                     balance += 1
-                    if len(eval_t) >0:
+                    if len(eval_t) > 0:
                         develText.append((eval_t, "EVAL"))
                         eval_t = ''
                 elif chr == ')':
@@ -183,7 +204,6 @@ def eval_Value(var, value):
             if textNow != '':
                 develText.append((textNow, 1))
             return develText
-
 
         print(ev, 'EV')
 
@@ -258,7 +278,7 @@ def eval_Value(var, value):
                         sym = message[1:-1]
                     else:
                         sym = message
-                    if sym in '+*?|_(){}[]#' and sym != '':
+                    if sym in '+*?|_(){}[]#\\' and sym != '':
                         sym = '\\' + sym
 
                     operation += sym
@@ -268,7 +288,7 @@ def eval_Value(var, value):
                     sym = '('
 
                     for chr in message[1:-1]:
-                        if chr in '+*?|_(){}[]#':
+                        if chr in '+*?|_(){}[]#\\':
                             sym += '\\'
                         sym += chr
                     sym += ')'
@@ -309,13 +329,14 @@ def eval_Value(var, value):
     if er:
         print('ERROR EN LA EXPRESION', value)
     else:
-        dictVar[var] = op
-        print('EXPRESION', op)
-        rg = {var: [var]}
-        newMachine = prepareAFN(rg)
-        machineValue.combine_States(newMachine)
+        if value != '' and not notDo:
+            dictVar[var] = op
+            print('EXPRESION', op)
+            rg = {var: [var]}
+            newMachine = prepareAFN(rg)
+            machineValue.combine_States(newMachine)
 
-    return new_ev
+    return new_ev, op
 
 
 def Eval_tokens(token):
@@ -324,9 +345,8 @@ def Eval_tokens(token):
     global lastMachine
     new_eval = []
     regex = {
-        'RETURN': ['\{ *return *[A-Z][A-Z]* *\}'],
-        'TOKEN': ["[a-z][a-z]*"],
-        'SYMBOL': ["'([^a]|a)'", '"([^a]|a)+"'],
+        'RETURN': ['\{[^{}]+\}'],
+        'TOKEN': ["([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+"],
         'Unit': ['\|']
     }
 
@@ -339,20 +359,20 @@ def Eval_tokens(token):
     for comp, type in rC:
         if type == 'TOKEN':
             if tokenName == '':
-                tokenName = comp
-            if comp not in dictVar:
-                return [(token, 1)]
-            regexDescription += dictVar[comp].replace(r'\n', '\n').replace(r'\t', '\t').replace(r'\v', '\v').replace(
-                r'\s', ' ')
+                tokenName = "print('"+comp.strip().replace("'", '"')+"')"
+            print(comp, type, 'TOKEN')
+            regexDescription += eval_Value(var='', value=comp, notDo=True)[1]
+            print(regexDescription, 'REGEX')
         if type == 'RETURN':
-            tokenName = comp[comp.find('return') + 6:comp.find('}')]
-        if type == 'SYMBOL':
-            rD = comp[1:-1]
-            if rD in '{[(+*?|)}]':
-                regexDescription += '\\'
-            regexDescription += rD
+            tokenName = comp[1:-1]
+            tkS = ''
+            for line in tokenName.split('\n'):
+                tkS += '\t'+line.strip()+'\n'
+            tokenName = tkS
+
 
         new_eval.append((comp, type))
+
     tk[tokenName.strip()] = [regexDescription]
     total_machines[lastMachine].update(tk)
 
@@ -360,19 +380,25 @@ def Eval_tokens(token):
 
 
 def create_mach():
-    global total_machines
+    global total_machines, orderPy
     if len(total_machines) == 0:
         return
 
     cout = 2
     print(total_machines, 'TOTALES')
+
+    code = ''
+
+    for i in orderPy:
+        code += i + "\n"
+
     for machine in total_machines:
         mach = prepareAFN(total_machines[machine], True)
-        code = translateToCode(mach, True)
-        with open("out_" + str(machine) + ".py", 'w') as fileW:
+        code += translateToCode(mach, True)
+        with open("out_" + str(machine) + ".py", 'w', encoding='utf-8') as fileW:
             fileW.write(code)
         cout += 1
-        draw_AF(mach, legend=machine, expression=machine, name='Machine')
+        draw_AF(mach, legend=machine, expression=machine, name='Machine', useNum=True)
 
 
 def getTotal():

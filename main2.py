@@ -49,6 +49,7 @@ class SimpleIDE:
         self.text_area.tag_configure("SYM", foreground="#000080")
         self.text_area.tag_configure("IND", foreground="#000080")
         self.text_area.tag_configure("GROUP", foreground="#000080")
+        self.text_area.tag_configure("HEADER", foreground="#FFD300")
 
         # Vincular el evento de edición a la función de resaltado
         self.text_area.bind("<KeyRelease>", self.resaltar_ocurrencias)
@@ -116,6 +117,7 @@ class SimpleIDE:
         self.text_area.tag_remove("SYM", 1.0, tk.END)
         self.text_area.tag_remove("IND", 1.0, tk.END)
         self.text_area.tag_remove("GROUP", 1.0, tk.END)
+        self.text_area.tag_remove("HEADER", 1.0, tk.END)
 
         start_index = 1.0
         for message, token in tokens:

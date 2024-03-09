@@ -1,20 +1,26 @@
-(* Lexer para Gramática No. 1 - Expresiones aritméticas simples para variables *)
+{
+import matplotlib.pyplot as plt
 
-(* Introducir cualquier header aqui *)
+x = [1, 2, 3, 4, 5]
+y = [2, 4, 6, 8, 10]
 
-let delim = [' ''\t''\n']
-let ws = delim+
-let letter = ['A'-'Z''a'-'z']
-let digit = ['0'-'9']
-let id = letter(letter|digit)*
+}
 
-rule tokens =
-    ws
-  | id        { return ID }            (* Cambie por una acción válida, que devuelva el token *)
-  | "if"        { return IF }          (* Cambie por una acción válida, que devuelva el token *)
-  | '+'       { return PLUS }
-  | '*'       { return TIMES }
-  | '('       { return LPAREN }
-  | ')'       { return RPAREN }
+let letter = ['a'-'z']
 
-(* Introducir cualquier trailer aqui *) 
+
+rule op = 
+letter {
+plt.plot(x, y)
+
+# Agregar etiquetas a los ejes
+plt.xlabel('Eje X')
+plt.ylabel('Eje Y')
+
+# Agregar un t�tulo a la gr�fica
+plt.title('Gr�fica Simple')
+
+# Mostrar la gr�fica
+plt.show()
+}
+

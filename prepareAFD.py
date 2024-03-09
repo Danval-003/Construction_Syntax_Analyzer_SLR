@@ -24,7 +24,6 @@ def create_mach(token, regex, count, resultQueue: Queue, TreeQueue: Queue):
     resultQueue.put(minimize[1])
 
 
-
 def prepareAFN(expressions: Dict[str, List[str]], showTree = False) -> State:
     initState: State or None = None
     cont = 0
@@ -70,7 +69,7 @@ def prepareAFN(expressions: Dict[str, List[str]], showTree = False) -> State:
             iniTreeNode = newInitNode
 
     if showTree:
-        draw_tree(iniTreeNode, 'default', True)
+        draw_tree(iniTreeNode, 'default', useNum=True)
     initState.value = 'a0'
     return initState
 
@@ -93,7 +92,11 @@ def translateToCode(initState: State, isOut: bool = False) -> str:
         if state.isFinalState:
             code += f"{i}.isFinalState = True\n"
         if len(state.token) > 0:
-            code += f"{i}.addToken('{state.getToken()}')\n"
+            code += f"""\n\ndef tk_{i}(): \n"""
+            for j in state.token:
+                code += f"\t{j}\n"
+
+            code += f"\n\n{i}.token = tk_{i}\n"
         for tran, states in state.transitions.items():
             for st in states:
                 code += f"{i}.add_transition({tran}, {st.value})\n"
@@ -108,7 +111,6 @@ class State:
         self.value: str = value
         self.transitions: Dict[str or int, Set['State']] = {}
         self.isFinalState: bool = False
-        self.token: Set[str] = set()
         self.numTrans: int = 0
 
     def add_transition(self, value: str or int, state: 'State') -> None:
@@ -130,14 +132,13 @@ class State:
     def __hash__(self):
         return hash((self.value, id(self)))
 
-    def addToken(self, tk: str):
-        self.token.add(tk)
-
     def getToken(self) -> str or None:
         return str(list(self.token)[0]) if len(self.token) > 0 else None
 
     def numberTransitions(self) -> int:
         return self.numTrans
+        
+        
 \n\n""" + code
 
         code = f"from typing import *\n\n" + code
@@ -177,7 +178,7 @@ def exclusiveSim(initState: State, string: str):
 
             lastChar, lastStateAccepted, _ = lastPathAccepted[0]
             textToAccept = string[lasChIndex:lastChar + 1]
-            listTextTuple.append((textToAccept, lastStateAccepted[-1].getToken()))
+            listTextTuple.append((textToAccept, lastStateAccepted[-1].token))
             lasChIndex = lastChar + 1
             chIndex = lastChar + 1
             paths = [[initState]]
@@ -189,7 +190,7 @@ def exclusiveSim(initState: State, string: str):
         for path in newPaths:
             if path[-1].isFinalState:
                 newLastPathAccepted.append(
-                    (chIndex, path, sum([path[i].numberTransitions() for i in range(len(path))])))
+                    (chIndex, path, path[-1].value))
 
         if len(newLastPathAccepted) > 0:
             lastPathAccepted = sorted(newLastPathAccepted, key=lambda x: x[2])
@@ -222,7 +223,7 @@ if __name__ == '__main__':
     tokens = exclusiveSim(a0, contents)
     for message, token in tokens:
         if token != 1 and token != 0:
-            print(CYAN, 'TEXT:', WHITE, message, CYAN, ' -> ', RESET, GREEN, token, RESET)
+            token()
         elif token == 1:
             print(RED, 'ERROR IN LINE:', message, RESET)
         """

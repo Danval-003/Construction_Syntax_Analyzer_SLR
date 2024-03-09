@@ -131,6 +131,9 @@ def transformsChar(contents: List[str]) -> List[List[str or int]]:
                     continue
                 else:
                     transformed[-1].append(ord(line[charIndex]))
+                    escaped = False
+                    charIndex += 1
+                    continue
 
             if line[charIndex] in '_' and not escaped:
                 transformed[-1].append('(')

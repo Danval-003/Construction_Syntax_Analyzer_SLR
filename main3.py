@@ -5,15 +5,12 @@ from Draw_diagrams import *
 from Simulator import *
 
 regexInSet = {
-    'IN_SET': ["\[([^a[]]|a|' ')*\]"],
-    'IN_GROUP': ["\(([^\n \t]|'[\n \t]'|' '|\"(_| )+\"|[a-z])+\)"],
-    'OPERATOR': ['\|', '\?', '\*', '^', '\+', '\#'],
-    'SYMBOL': ["'[a-zA-Z0-9]'", "'[+*?|# ]'", "'''", "'[\n \t]'", "' '", "\_", "'[^a-zA-Z0-9']'"],
-    'STRING': ['"(_| )+"']
+    'HEADER': ["(\\\\)"]
 }
 
 if __name__ == "__main__":
-    machine = prepareAFN( regexInSet)
-    sim = exclusiveSim(machine, "digits(.digits)?('E'['+''-']?digits)?")
+    machine = import_module( 'try.py', regexInSet)
+    draw_AF(machine, 'AFD', 'try', True, 'AFD', True)
+    sim = exclusiveSim(machine, "\\")
     print(sim)
 
