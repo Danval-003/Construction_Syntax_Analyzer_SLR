@@ -1,5 +1,5 @@
 from typing import Dict, List, Set, Tuple
-from Classes_ import Node, State
+from Machines_gen_usage.Classes_ import Node, State
 
 
 def make_direct_AFD(tree: Node, nodes: Dict[str or int, Node], alphaSet: Set[int], token: str = ''):

@@ -1,5 +1,5 @@
 from typing import *
-from CharsSet import *
+from Machines_gen_usage.CharsSet import *
 
 
 def reader(filename: str) -> str:

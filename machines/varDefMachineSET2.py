@@ -1,24 +1,31 @@
-from Classes_ import State
+from Machines_gen_usage.Classes_ import State
 
 e3 = State('e3')
 e2 = State('e2')
 e1 = State('e1')
 d1 = State('d1')
-c3 = State('c3')
-c2 = State('c2')
-c1 = State('c1')
 b3 = State('b3')
 b2 = State('b2')
 b1 = State('b1')
 a3 = State('a3')
 a2 = State('a2')
 a1 = State('a1')
+c3 = State('c3')
+c2 = State('c2')
+c1 = State('c1')
 a0 = State('a0')
+a0.add_transition(39, c1)
 a0.add_transition(39, a1)
 a0.add_transition(39, b1)
-a0.add_transition(39, c1)
 a0.add_transition(45, d1)
 a0.add_transition(34, e1)
+
+c1.add_transition(116, c2)
+
+c2.add_transition(39, c3)
+
+c3.isFinalState = True
+c3.addToken( 'IND')
 
 a1.add_transition(32, a2)
 a1.add_transition(48, a2)
@@ -87,7 +94,7 @@ a1.add_transition(122, a2)
 a2.add_transition(39, a3)
 
 a3.isFinalState = True
-a3.addToken('IND')
+a3.addToken( 'IND')
 
 b1.add_transition(0, b2)
 b1.add_transition(1, b2)
@@ -348,17 +355,10 @@ b1.add_transition(255, b2)
 b2.add_transition(39, b3)
 
 b3.isFinalState = True
-b3.addToken('IND')
-
-c1.add_transition(116, c2)
-
-c2.add_transition(39, c3)
-
-c3.isFinalState = True
-c3.addToken('IND')
+b3.addToken( 'IND')
 
 d1.isFinalState = True
-d1.addToken('OPER')
+d1.addToken( 'OPER')
 
 e1.add_transition(0, e2)
 e1.add_transition(1, e2)
@@ -873,7 +873,7 @@ e2.add_transition(254, e2)
 e2.add_transition(255, e2)
 
 e3.isFinalState = True
-e3.addToken('GROUP')
+e3.addToken( 'GROUP')
 e3.add_transition(0, e2)
 e3.add_transition(1, e2)
 e3.add_transition(2, e2)

@@ -2,7 +2,7 @@
 digraph {
 	rankdir=LR
 	label=AFD
-	2077715202512 [label=a0 shape=circle]
-	2077715202464 [label=a1 shape=doublecircle]
-	2077715202512 -> 2077715202464 [label=92]
+	2627527690720 [label=a0 shape=circle]
+	2627541516208 [label=a1 shape=doublecircle]
+	2627527690720 -> 2627541516208 [label=92]
 }

@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import threading
 import time
-from GUI_funtions import eval_Text, getTotal, create_mach
+from yalexRead.yalex_reader import eval_Text, getTotal, create_mach
 
 
 def get_tag_from_token(token):
@@ -50,6 +50,7 @@ class SimpleIDE:
         self.text_area.tag_configure("IND", foreground="#000080")
         self.text_area.tag_configure("GROUP", foreground="#000080")
         self.text_area.tag_configure("HEADER", foreground="#FFD300")
+        self.text_area.tag_configure("ESCAPED", foreground="#87CEEB")
 
         # Vincular el evento de edición a la función de resaltado
         self.text_area.bind("<KeyRelease>", self.resaltar_ocurrencias)
@@ -118,6 +119,7 @@ class SimpleIDE:
         self.text_area.tag_remove("IND", 1.0, tk.END)
         self.text_area.tag_remove("GROUP", 1.0, tk.END)
         self.text_area.tag_remove("HEADER", 1.0, tk.END)
+        self.text_area.tag_remove("ESCAPED", 1.0, tk.END)
 
         start_index = 1.0
         for message, token in tokens:

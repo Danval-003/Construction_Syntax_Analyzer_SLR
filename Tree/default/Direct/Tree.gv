@@ -1,12 +1,103 @@
-// Tree
-digraph {
-	2298216724336 [label=Root]
-	2298216724336 -> 2298216715072
-	2298216715072 [label=op]
-	2298216715072 -> 2298209553920
-	2298209553920 [label="."]
-	2298209553920 -> 2298216710416
-	2298216710416 [label="\"]
-	2298209553920 -> 2298216718672
-	2298216718672 [label="#"]
+digraph relaciones {
+  // Mangas
+  node [style=filled fillcolor="#FFCC00" fontname="Helvetica" fontsize=10 shape=circle]
+  "One Piece" [label="One Piece\n450M Ventas\nEiichiro Oda\nJul 22, 1997" color="#FFCC00" fontcolor="#333333"]
+  "Jujutsu Kaisen" [label="Jujutsu Kaisen\n36M Ventas\nGege Akutami\nMar 5, 2018" color="#FFCC00" fontcolor="#333333"]
+  "Dr. Stone" [label="Dr. Stone\n8M Ventas\nRiichiro Inagaki y Boichi\nMar 6, 2017" color="#FFCC00" fontcolor="#333333"]
+  "Naruto" [label="Naruto\n250M Ventas\nMasashi Kishimoto\nSep 21, 1999" color="#FFCC00" fontcolor="#333333"]
+  "Ao no Hako" [label="Ao no Hako\n1M Ventas\nHaruko Ichikawa\nJun 3, 2020" color="#FFCC00" fontcolor="#333333"]
+
+  // Animes
+  node [style=filled fillcolor="#66CCCC" fontname="Helvetica" fontsize=10 shape=circle]
+  "One Piece Anime" [label="One Piece Anime\n1000+ Episodios\nEiichiro Oda\nOct 20, 1999" color="#66CCCC" fontcolor="#333333"]
+  "Jujutsu Kaisen Anime" [label="Jujutsu Kaisen Anime\n24 Episodios\nGege Akutami\nOct 3, 2020" color="#66CCCC" fontcolor="#333333"]
+  "Dr. Stone Anime" [label="Dr. Stone Anime\n24 Episodios\nRiichiro Inagaki y Boichi\nJul 5, 2019" color="#66CCCC" fontcolor="#333333"]
+  "Naruto Anime" [label="Naruto Anime\n220+500 Episodios\nMasashi Kishimoto\nOct 3, 2002" color="#66CCCC" fontcolor="#333333"]
+  "Code Geass" [label="Code Geass\n50 Episodios\nGorō Taniguchi\nOct 5, 2006" color="#66CCCC" fontcolor="#333333"]
+  "Kimetsu no Yaiba Anime" [label="Kimetsu no Yaiba Anime\n26 Episodios\nKoyoharu Gotouge\nApr 6, 2019" color="#66CCCC" fontcolor="#333333"]
+  "Mi Vecino Totoro" [label="Mi Vecino Totoro\nPelícula\nHayao Miyazaki\nApr 16, 1988" color="#66CCCC" fontcolor="#333333"]
+
+  // Personas
+  node [style=filled fillcolor="#FF9900" fontname="Helvetica" fontsize=10 shape=circle]
+  "Manolo" [label="Manolo\n25 años\nEne 10, 2018\nMasculino\nManolo Gutierrez" color="#FF9900" fontcolor="#333333"]
+  "Lucía" [label="Lucía\n28 años\nMar 2, 2017\nFemenino\nLucía Pop" color="#FF9900" fontcolor="#333333"]
+  "Alberto" [label="Alberto\n30 años\nSep 15, 2019\nMasculino\nAlberto Alvarez" color="#FF9900" fontcolor="#333333"]
+  "Elías" [label="Elías\n22 años\nMay 8, 2020\nMasculino\nElías Díaz" color="#FF9900" fontcolor="#333333"]
+  "Armando" [label="Armando\n27 años\nJul 4, 2016\nMasculino\nArmando Reyes" color="#FF9900" fontcolor="#333333"]
+
+  // Géneros
+  node [style=filled fillcolor="#FF6666" fontname="Helvetica" fontsize=10 shape=circle]
+  "Militar" [label="Militar\nEnfocado en conflictos y estrategias militares\nMedia\n8.5" color="#FF6666" fontcolor="#333333"]
+  "Psicológico" [label="Psicológico\nHistorias con batallas de pensamiento\nAlta\n7.9" color="#FF6666" fontcolor="#333333"]
+  "Acción" [label="Acción\nEmocionantes escenas de lucha y aventuras\nAlta\n8.2" color="#FF6666" fontcolor="#333333"]
+  "Aventura" [label="Aventura\nViajes y descubrimientos emocionantes\nAlta\n8.0" color="#FF6666" fontcolor="#333333"]
+  "Drama" [label="Drama\nNarrativas intensas y emotivas\nAlta\n8.7" color="#FF6666" fontcolor="#333333"]
+  "Batallas" [label="Batallas\nEnfocado en confrontaciones épicas\nMedia\n8.4" color="#FF6666" fontcolor="#333333"]
+
+  // Relaciones entre Mangas y Animes
+  edge [color="#3399FF" fontcolor="#3399FF"]
+  "One Piece" -> "One Piece Anime" [label="Basado en"]
+  "Jujutsu Kaisen" -> "Jujutsu Kaisen Anime" [label="Basado en"]
+  "Dr. Stone" -> "Dr. Stone Anime" [label="Basado en"]
+  "Naruto" -> "Naruto Anime" [label="Basado en"]
+  "Kimetsu no Yaiba" -> "Kimetsu no Yaiba Anime" [label="Basado en"]
+
+  // Relaciones entre Personas, Mangas y Animes
+  edge [color="#33CC33" fontcolor="#33CC33"]
+  "Manolo" -> "One Piece" [label="Le gusta"]
+  "Lucía" -> "Kimetsu no Yaiba" [label="Le gusta"]
+  "Alberto" -> "Jujutsu Kaisen" [label="Le gusta"]
+  "Elías" -> "Naruto" [label="Le gusta"]
+  "Armando" -> "Dr. Stone" [label="Le gusta"]
+  "Manolo" -> "One Piece Anime" [label="Le gusta"]
+  "Lucía" -> "Kimetsu no Yaiba Anime" [label="Le gusta"]
+  "Alberto" -> "Jujutsu Kaisen Anime" [label="Le gusta"]
+  "Elías" -> "Naruto Anime" [label="Le gusta"]
+  "Armando" -> "Dr. Stone Anime" [label="Le gusta"]
+
+  // Relaciones entre Personas y Géneros
+  edge [color="#FFCC00" fontcolor="#FFCC00"]
+  "Manolo" -> "Aventura" [label="Le gusta"]
+  "Lucía" -> "Acción" [label="Le gusta"]
+  "Alberto" -> "Acción" [label="Le gusta"]
+  "Elías" -> "Aventura" [label="Le gusta"]
+  "Armando" -> "Aventura" [label="Le gusta"]
+
+  // Relaciones entre Mangas y Géneros
+  edge [color="#FF9933" fontcolor="#FF9933"]
+  "One Piece" -> "Aventura" [label="Pertenece a"]
+  "Jujutsu Kaisen" -> "Acción" [label="Pertenece a"]
+  "Dr. Stone" -> "Aventura" [label="Pertenece a"]
+  "Naruto" -> "Acción" [label="Pertenece a"]
+  "Ao no Hako" -> "Drama" [label="Pertenece a"]
+  "Code Geass" -> "Batallas" [label="Pertenece a"]
+  "Code Geass" -> "Drama" [label="Pertenece a"]
+  "Code Geass" -> "Psicológico" [label="Pertenece a"]
+
+  // Relaciones entre Animes y Géneros
+  edge [color="#FF3333" fontcolor="#FF3333"]
+  "One Piece Anime" -> "Aventura" [label="Pertenece a"]
+  "Jujutsu Kaisen Anime" -> "Acción" [label="Pertenece a"]
+  "Dr. Stone Anime" -> "Aventura" [label="Pertenece a"]
+  "Naruto Anime" -> "Acción" [label="Pertenece a"]
+  "Code Geass" -> "Militar" [label="Pertenece a"]
+  "Code Geass" -> "Batallas" [label="Pertenece a"]
+  "Code Geass" -> "Drama" [label="Pertenece a"]
+  "Code Geass" -> "Psicológico" [label="Pertenece a"]
+  "Kimetsu no Yaiba Anime" -> "Acción" [label="Pertenece a"]
+  "Mi Vecino Totoro" -> "Aventura" [label="Pertenece a"]
+
+  // Relaciones entre Personas y Mangas/Animes
+  edge [color="#FF9900" fontcolor="#FF9900"]
+  "Manolo" -> "Naruto" [label="Le gusta"]
+  "Lucía" -> "Kimetsu no Yaiba" [label="Le gusta"]
+  "Alberto" -> "Jujutsu Kaisen" [label="Le gusta"]
+  "Elías" -> "Dr. Stone" [label="Le gusta"]
+  "Armando" -> "One Piece" [label="Le gusta"]
+  "Manolo" -> "Code Geass" [label="Le gusta"]
+  "Jujutsu Kaisen Anime" -> "Batallas" [label="Le gusta"]
+  "Code Geass" -> "Batallas" [label="Le gusta"]
+  "Code Geass" -> "Drama" [label="Le gusta"]
+  "Code Geass" -> "Psicológico" [label="Le gusta"]
+
 }

@@ -1,7 +1,6 @@
-from prepareAFD import *
-import ErroManagerReaders as err
-from Draw_diagrams import *
-from Simulator import *
+from Machines_gen_usage.prepareAFD import *
+from Machines_gen_usage.Draw_diagrams import *
+from Machines_gen_usage.Simulator import *
 
 regex = {
     'COMMENTARY': ['\(\* *([^)]| )* *\*\)'],
@@ -9,7 +8,7 @@ regex = {
     'DECLARATIONS': ["let +[a-z]+ += *\n*([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+"],
     'TOKENS': ["\| *([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+ +\{[^{}]+\}"],
     'FIRST': ["([^\"' {}\n\t]|'(_| |\\\\[sntv])'|\"([^\"]| )+\")+ +\{[^{}]+\}", "([a-z])+"],
-    'HEADER': ["\{[^{}]+\}"]
+    'HEADER': ["\{([^{}]|\\\\\{|\\\\\})+\}"]
 }
 
 machine = import_module("yalexReader2.py", regex)
@@ -59,9 +58,31 @@ def eval_Text(text):
         if token == 'HEADER':
             if not findHeader:
                 head = message[1:-1].split('\n')
+
+                if '\{' in message or '\}' in message:
+                    for h in head:
+                        orderPy.append(h.replace('\{', '{').replace('\}', '}'))
+                    print('HEADER', message)
+                    sepToEscapePre = message.split('\{')
+                    sepToEscape = []
+                    for sep in sepToEscapePre:
+                        sepToEscape += sep.split('\}')
+
+                    for sep in sepToEscape:
+                        new_eval.append((sep, 'HEADER'))
+                        new_eval.append(('\\', "ESCAPED"))
+                        new_eval.append(('{', "ESCAPED"))
+
+                    new_eval.pop()
+                    new_eval.pop()
+                    continue
                 orderPy += head
+                new_eval.append((message, 'HEADER'))
+                continue
+
             else:
                 new_eval.append((message, 1))
+            continue
 
         if token == 'TOKENS':
             n = Eval_tokens(message)
@@ -395,7 +416,7 @@ def create_mach():
     for machine in total_machines:
         mach = prepareAFN(total_machines[machine], True)
         code += translateToCode(mach, True)
-        with open("out_" + str(machine) + ".py", 'w', encoding='utf-8') as fileW:
+        with open("./scaner/out_" + str(machine) + ".py", 'w', encoding='utf-8') as fileW:
             fileW.write(code)
         cout += 1
         draw_AF(mach, legend=machine, expression=machine, name='Machine', useNum=True)

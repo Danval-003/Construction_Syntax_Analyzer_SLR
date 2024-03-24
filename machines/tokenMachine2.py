@@ -1,4 +1,4 @@
-from Classes_ import State
+from Machines_gen_usage.Classes_ import State
 
 c1 = State('c1')
 b5 = State('b5')
@@ -132,8 +132,8 @@ a0.add_transition(119, b6)
 a0.add_transition(120, b6)
 a0.add_transition(121, b6)
 a0.add_transition(122, b6)
-a0.add_transition(124, c1)
 a0.add_transition(124, b6)
+a0.add_transition(124, c1)
 a0.add_transition(126, b6)
 a0.add_transition(127, b6)
 a0.add_transition(128, b6)
@@ -777,10 +777,10 @@ a2.add_transition(254, a2)
 a2.add_transition(255, a2)
 
 a3.isFinalState = True
-a3.addToken('RETURN')
+a3.addToken( 'RETURN')
 
 b6.isFinalState = True
-b6.addToken('TOKEN')
+b6.addToken( 'TOKEN')
 b6.add_transition(0, b6)
 b6.add_transition(1, b6)
 b6.add_transition(2, b6)
@@ -1812,5 +1812,5 @@ b5.add_transition(116, b4)
 b5.add_transition(118, b4)
 
 c1.isFinalState = True
-c1.addToken('Unit')
+c1.addToken( 'Unit')
 

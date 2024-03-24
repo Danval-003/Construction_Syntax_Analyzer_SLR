@@ -1,8 +1,8 @@
-from Colors import *
+from Machines_gen_usage.Colors import *
 from typing import *
-from Classes_ import State
+from Machines_gen_usage.Classes_ import State
 import time
-import ErroManagerReaders as err
+from tools import ErroManagerReaders as err
 
 
 def Simulator(states: Dict[str, State], string: str, expression=""):
@@ -154,7 +154,6 @@ def exclusiveSim(initState: State, string: str):
         listTextTuple.pop()
         listTextTuple.append((text[:-1], 1))
         listTextTuple.append((' ', 0))
-
 
     for line, token in listTextTuple:
         if token == 1:

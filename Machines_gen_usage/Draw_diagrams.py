@@ -1,4 +1,4 @@
-from Classes_ import *
+from Machines_gen_usage.Classes_ import *
 import graphviz
 
 
@@ -42,3 +42,24 @@ def draw_AF(initState: State, legend: str = 'AF', expression='default', direct=F
     draw_state(initState)
 
     dot.render(name+'.gv', view=True, directory='./machine/'+expression)
+
+
+def draw_LR0(initState: LRO_S, legend: str = 'AF', expression='default'):
+    dot: 'graphviz.graphs.Digraph' = graphviz.Digraph(comment='LR0')
+    dot.attr(rankdir='LR')
+    setStates = set()
+    dot.attr(label=legend)
+
+    def draw_state(state: 'LRO_S'):
+        setStates.add(state)
+        dot.node(str(state.numState), label=str(state),
+                 shape='doublecircle' if state.isFinalState else 'circle')
+        for transition in state.transitions:
+            destiny = state.transitions[transition]
+            if destiny not in setStates:
+                draw_state(destiny)
+            dot.edge(str(state.numState), str(destiny.numState), label=transition.value)
+
+    draw_state(initState)
+
+    dot.render('LR0' + '.gv', view=True, directory='./LR0/' + expression)

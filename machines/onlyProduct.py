@@ -1,4 +1,4 @@
-from Classes_ import State
+from Machines_gen_usage.Classes_ import State
 
 a2 = State('a2')
 a1 = State('a1')
@@ -262,5 +262,5 @@ a1.add_transition(254, a1)
 a1.add_transition(255, a1)
 
 a2.isFinalState = True
-a2.addToken('IN_SET')
+a2.addToken( 'IN_SET')
 

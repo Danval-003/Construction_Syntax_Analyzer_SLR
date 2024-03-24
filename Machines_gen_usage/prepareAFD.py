@@ -1,11 +1,11 @@
-from Reader import *
-from infix_converter import *
-from Tree_ import *
-from AFD_direct import *
+from tools.Reader import *
+from Machines_gen_usage.infix_converter import *
+from Machines_gen_usage.Tree_ import *
+from Machines_gen_usage.AFD_direct import *
 import string
 import os
 import importlib.util
-from Draw_diagrams import draw_AF, draw_tree
+from Machines_gen_usage.Draw_diagrams import draw_tree
 import threading
 from queue import Queue
 
@@ -92,11 +92,15 @@ def translateToCode(initState: State, isOut: bool = False) -> str:
         if state.isFinalState:
             code += f"{i}.isFinalState = True\n"
         if len(state.token) > 0:
-            code += f"""\n\ndef tk_{i}(): \n"""
-            for j in state.token:
-                code += f"\t{j}\n"
+            if isOut:
+                code += f"""\n\ndef tk_{i}(): \n"""
+                for j in state.token:
+                    code += f"\t{j}\n"
+                code += f"\n\n{i}.token = tk_{i}\n"
+            else:
+                for j in state.token:
+                    code += f"{i}.addToken( '{j.replace("'", r"\'")}')\n"
 
-            code += f"\n\n{i}.token = tk_{i}\n"
         for tran, states in state.transitions.items():
             for st in states:
                 code += f"{i}.add_transition({tran}, {st.value})\n"
@@ -223,12 +227,13 @@ if __name__ == '__main__':
     tokens = exclusiveSim(a0, contents)
     for message, token in tokens:
         if token != 1 and token != 0:
+            print(GREEN, message, RESET, '->')
             token()
         elif token == 1:
             print(RED, 'ERROR IN LINE:', message, RESET)
         """
     else:
-        code = f"from Classes_ import State\n\n" + code
+        code = f"from Machines_gen_usage.Classes_ import State\n\n" + code
     return code
 
 
@@ -263,6 +268,7 @@ def statesTotla(initState: State) -> str:
 
 
 def import_module(file, regex, showTree=False):
+    file = './machines/' + file
     if os.path.isfile(file):
         import_module = file.split('.')[0]
         spec = importlib.util.spec_from_file_location(import_module, file)
