@@ -1,11 +1,12 @@
-(* Lexer para GramÃ¡tica No. 1 - Expresiones aritmÃ©ticas simples para variables *)
+(* Lexer para Gramática No. 1 - Expresiones aritméticas simples para variables *)
 
 (* Introducir cualquier header aqui *)
 {
-import matplotlib.pyplot as plt
-import numpy as np
-\{\}
+with open('../out/tokens.txt', 'w') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("")
 }
+
 
 let delim = [' ''\t''\n']
 let ws = delim+
@@ -15,60 +16,31 @@ let id = letter(letter|digit)*
 
 rule tokens =
     ws
-  | id        { 
-# Graficar una función lineal y = mx + b
-x = np.linspace(0, 10, 100)  # Generar 100 puntos entre 0 y 10
-m = 2  # Pendiente
-b = 1  # Intercepto
-y_lineal = m * x + b
-
-plt.figure(figsize=(8, 6))
-plt.plot(x, y_lineal, label='y = 2x + 1')
-plt.title('Gráfica de una función lineal')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.grid(True)
-plt.show()
- }     (* Cambie por una acciÃ³n vÃ¡lida, que devuelva el token *)
-  | '+'       { 
-# Graficar una función cuadrática y = ax^2 + bx + c
-x = np.linspace(-5, 5, 100)
-a = 1
-b = -2
-c = 3
-y_cuadratica = a * x ** 2 + b * x + c
-
-plt.figure(figsize=(8, 6))
-plt.plot(x, y_cuadratica, label='y = x^2 - 2x + 3', color='r')
-plt.title('Gráfica de una función cuadrática')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.grid(True)
-plt.show()
-
-
- }
+  | id        {
+with open('../out/tokens.txt', 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("ID ")
+ }               (* Cambie por una acción válida, que devuelva el token *)
+  | '+'       {
+with open('../out/tokens.txt', 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("PLUS ")
+}
   | '*'       { 
-# Graficar una función senoidal y = sin(x)
-x = np.linspace(0, 2 * np.pi, 100)
-y_senoidal = np.sin(x)
-
-plt.figure(figsize=(8, 6))
-plt.plot(x, y_senoidal, label='y = sin(x)', color='g')
-plt.title('Gráfica de una función senoidal')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.legend()
-plt.grid(True)
-plt.show()
-
- }
-  | '('       { print('LPAREN') }
-  | ')'       { print('RPAREN') }
+with open('../out/tokens.txt', 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("TIMES ")
+}
+  | '('       { 
+with open('../out/tokens.txt', 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("LPAREN ")
+  }
+  | ')'       { 
+with open('../out/tokens.txt', 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("RPAREN ")
+}
 
 (* Introducir cualquier trailer aqui *) 
-
-
 

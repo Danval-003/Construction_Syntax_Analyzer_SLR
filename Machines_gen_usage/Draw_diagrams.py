@@ -18,7 +18,7 @@ def draw_tree(f_node: Node, expression='default', direct=False, useNum=False):
 
     draw_node(f_node)
 
-    dot.render('Tree.gv', view=True, directory='./Tree/'+expression+'/'+('Direct' if direct else 'Infix'))
+    dot.render('Tree.gv', view=True, directory='./Tree/' + expression + '/' + ('Direct' if direct else 'Infix'))
 
 
 def draw_AF(initState: State, legend: str = 'AF', expression='default', direct=False, name='AFN', useNum=False):
@@ -41,18 +41,20 @@ def draw_AF(initState: State, legend: str = 'AF', expression='default', direct=F
 
     draw_state(initState)
 
-    dot.render(name+'.gv', view=True, directory='./machine/'+expression)
+    dot.render(name + '.gv', view=True, directory='./machine/' + expression)
 
 
-def draw_LR0(initState: LRO_S, legend: str = 'AF', expression='default'):
+def draw_LR0(initState: LRO_S, legend: str = 'AF', expression='default', useNum=False):
     dot: 'graphviz.graphs.Digraph' = graphviz.Digraph(comment='LR0')
     dot.attr(rankdir='LR')
     setStates = set()
     dot.attr(label=legend)
 
     def draw_state(state: 'LRO_S'):
+        nonlocal useNum
         setStates.add(state)
-        dot.node(str(state.numState), label=str(state),
+        name = str(state.numState) if useNum else str(state)
+        dot.node(str(state.numState), label=name,
                  shape='doublecircle' if state.isFinalState else 'circle')
         for transition in state.transitions:
             destiny = state.transitions[transition]
@@ -62,4 +64,6 @@ def draw_LR0(initState: LRO_S, legend: str = 'AF', expression='default'):
 
     draw_state(initState)
 
-    dot.render('LR0' + '.gv', view=True, directory='./LR0/' + expression)
+    typeGraph = 'explicit' if useNum else 'implicit'
+
+    dot.render('LR0_' + typeGraph + '.gv', view=True, directory='./LR0/' + expression)

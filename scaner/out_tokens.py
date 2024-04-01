@@ -1,7 +1,7 @@
 
-import matplotlib.pyplot as plt
-import numpy as np
-{}
+with open('../out/tokens.txt', 'w') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("")
 
 from typing import *
 
@@ -41,8 +41,8 @@ class State:
         
 
 
-f1 = State('f1')
 e1 = State('e1')
+f1 = State('f1')
 d1 = State('d1')
 c1 = State('c1')
 b1 = State('b1')
@@ -105,8 +105,8 @@ a0.add_transition(121, b1)
 a0.add_transition(122, b1)
 a0.add_transition(43, c1)
 a0.add_transition(42, d1)
-a0.add_transition(40, e1)
 a0.add_transition(41, f1)
+a0.add_transition(40, e1)
 
 a1.isFinalState = True
 
@@ -124,20 +124,9 @@ b1.isFinalState = True
 
 
 def tk_b1(): 
-	# Graficar una función lineal y = mx + b
-	x = np.linspace(0, 10, 100)  # Generar 100 puntos entre 0 y 10
-	m = 2  # Pendiente
-	b = 1  # Intercepto
-	y_lineal = m * x + b
-	
-	plt.figure(figsize=(8, 6))
-	plt.plot(x, y_lineal, label='y = 2x + 1')
-	plt.title('Gráfica de una función lineal')
-	plt.xlabel('x')
-	plt.ylabel('y')
-	plt.legend()
-	plt.grid(True)
-	plt.show()
+	with open('../out/tokens.txt', 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("ID ")
 
 
 b1.token = tk_b1
@@ -208,21 +197,9 @@ c1.isFinalState = True
 
 
 def tk_c1(): 
-	# Graficar una función cuadrática y = ax^2 + bx + c
-	x = np.linspace(-5, 5, 100)
-	a = 1
-	b = -2
-	c = 3
-	y_cuadratica = a * x ** 2 + b * x + c
-	
-	plt.figure(figsize=(8, 6))
-	plt.plot(x, y_cuadratica, label='y = x^2 - 2x + 3', color='r')
-	plt.title('Gráfica de una función cuadrática')
-	plt.xlabel('x')
-	plt.ylabel('y')
-	plt.legend()
-	plt.grid(True)
-	plt.show()
+	with open('../out/tokens.txt', 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("PLUS ")
 
 
 c1.token = tk_c1
@@ -231,39 +208,34 @@ d1.isFinalState = True
 
 
 def tk_d1(): 
-	# Graficar una función senoidal y = sin(x)
-	x = np.linspace(0, 2 * np.pi, 100)
-	y_senoidal = np.sin(x)
-	
-	plt.figure(figsize=(8, 6))
-	plt.plot(x, y_senoidal, label='y = sin(x)', color='g')
-	plt.title('Gráfica de una función senoidal')
-	plt.xlabel('x')
-	plt.ylabel('y')
-	plt.legend()
-	plt.grid(True)
-	plt.show()
+	with open('../out/tokens.txt', 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("TIMES ")
 
 
 d1.token = tk_d1
-
-e1.isFinalState = True
-
-
-def tk_e1(): 
-	print('LPAREN')
-
-
-e1.token = tk_e1
 
 f1.isFinalState = True
 
 
 def tk_f1(): 
-	print('RPAREN')
+	with open('../out/tokens.txt', 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("RPAREN ")
 
 
 f1.token = tk_f1
+
+e1.isFinalState = True
+
+
+def tk_e1(): 
+	with open('../out/tokens.txt', 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("LPAREN ")
+
+
+e1.token = tk_e1
 
 
 def exclusiveSim(initState: State, string: str):

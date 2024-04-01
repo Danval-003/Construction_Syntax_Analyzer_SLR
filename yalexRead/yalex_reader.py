@@ -388,7 +388,7 @@ def Eval_tokens(token):
             tokenName = comp[1:-1]
             tkS = ''
             for line in tokenName.split('\n'):
-                tkS += '\t'+line.strip()+'\n'
+                tkS += '\t'+line.rstrip()+'\n'
             tokenName = tkS
 
 
@@ -420,6 +420,8 @@ def create_mach():
             fileW.write(code)
         cout += 1
         draw_AF(mach, legend=machine, expression=machine, name='Machine', useNum=True)
+
+    return list(total_machines.keys())[0]
 
 
 def getTotal():

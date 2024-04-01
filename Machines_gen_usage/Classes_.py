@@ -163,13 +163,13 @@ class Grammar_Element:
     def __str__(self):
         return str(self.value)
 
-    def transition_to(self, production: List['Grammar_Element']) -> 'Production_Item':
+    def transition_to(self, production: List['Grammar_Element'], count_prod: int) -> 'Production_Item':
         if not self.epsilon:
             for elem in production:
                 if elem.epsilon:
                     self.epsilon = self.epsilon and True
                     break
-        product = Production_Item(self, production)
+        product = Production_Item(self, production, count_proud=count_prod)
         self.transition.add(product)
         self.firstCalculated.append(product)
         self.followCalculated.append(product)
@@ -223,14 +223,24 @@ class Grammar_Element:
 
 class Production_Item:
     def __init__(self, NonTerminal: 'Grammar_Element',
-                 Result: List['Grammar_Element'] or Tuple['Grammar_Element', ...], point: int = 0) -> None:
+                 Result: List['Grammar_Element'] or Tuple['Grammar_Element', ...], point: int = 0,
+                 original: 'Production_Item' or None = None,
+                 count_proud: int = 0
+                 ) -> None:
         self.NonTerminal: 'Grammar_Element' = NonTerminal
         self.Result: Tuple['Grammar_Element', ...] = tuple(Result)
         self.point: int = point
         self.final = False
         self.hasFinal = False
-        self.firstBeta:Set[Grammar_Element] = set()
+        self.firstBeta: Set[Grammar_Element] = set()
         self.followA = NonTerminal.follow
+        self.complete = not self.point < len(self.Result)
+        self.count = count_proud
+
+        if original:
+            self.original: 'Production_Item' = original
+        else:
+            self.original: 'Production_Item' = self
 
         for elem in Result:
             if elem.value == '$':
@@ -297,7 +307,8 @@ class Production_Item:
         return self.NonTerminal.value < other.NonTerminal.value
 
     def passPoint(self, Element: 'Grammar_Element') -> Tuple[bool, 'Production_Item']:
-        newProduction = Production_Item(self.NonTerminal, self.Result, self.point)
+        newProduction = Production_Item(self.NonTerminal, self.Result, self.point, original=self.original,
+                                        count_proud=self.count)
         if newProduction.point < len(newProduction.Result):
             if newProduction.Result[newProduction.point].value == Element.value:
                 newProduction.point += 1
@@ -321,7 +332,8 @@ class Production_Item:
                 elem = production.poitElement()
                 if elem is not None and not elem.terminal:
                     for transition in elem.transition:
-                        newProduction = Production_Item(transition.NonTerminal, transition.Result)
+                        newProduction = Production_Item(transition.NonTerminal, transition.Result,
+                                                        count_proud=transition.count)
                         if newProduction not in result:
                             newResult.add(newProduction)
             if len(newResult) == 0:
@@ -330,6 +342,10 @@ class Production_Item:
 
         return result
 
+    def compare_superficial_items(self, other: 'Production_Item'):
+        otherCount = other.count
+        return self.count == otherCount
+
 
 class LRO_S:
     def __init__(self, state: Set[Production_Item], numState: int = 0) -> None:
@@ -337,11 +353,26 @@ class LRO_S:
         self.transitions: Dict[Grammar_Element, 'LRO_S'] = {}
         self.numState: int = numState
         self.isFinalState: bool = False
+        self.hasConflict: bool = False
+
+        self.non_completed_Ter: List[Production_Item] = []
+        self.non_completed_NonTer: List[Production_Item] = []
+        self.complete: List[Production_Item] = []
 
         for production in state:
-            if production.final:
+            if production.complete or not production.poitElement():
+                self.complete.append(production)
+            else:
+                if production.poitElement().terminal:
+                    self.non_completed_Ter.append(production)
+                else:
+                    self.non_completed_NonTer.append(production)
+
+            if production.final and not self.isFinalState:
                 self.isFinalState = True
-                break
+
+        self.hasConflict = len(self.complete) > 0 and len(self.non_completed_Ter) > 0 and len(
+            self.non_completed_NonTer) > 0
 
     def add_transition(self, value: Grammar_Element, state: 'LRO_S') -> None:
         if value in self.transitions:
@@ -360,5 +391,4 @@ class LRO_S:
         return hash(self.state)
 
     def __str__(self):
-        return f"{self.numState}: " + ' '.join([i.__str__() for i in self.state])
-
+        return f"{self.numState}\n" + '\n'.join([i.__str__() for i in self.state])

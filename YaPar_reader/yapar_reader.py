@@ -23,6 +23,8 @@ class yaPar_reader:
         self.firstProduct: 'Production_Item' or None = None
         self.symbols: Set[Grammar_Element] = set()
         self.lr0_states: Dict[int, LRO_S] = dict()
+        self.LR0: LRO_S or None = None
+        self.prsDict: Dict[int, Production_Item] = {}
 
     def organize(self):
         organize_machine = import_module('yaPar_reader.py',
@@ -66,6 +68,7 @@ class yaPar_reader:
                 message2 = message2[1][:-1].strip().split('|')
                 prs[prName] = message2
 
+        count_prod = 2
         for key in self.productions:
             for pr in prs[key]:
                 pr = pr.strip().split(' ')
@@ -78,12 +81,17 @@ class yaPar_reader:
                     else:
                         raise Exception('Token not found in definition to production', key)
 
-                self.productions[key].transition_to(production)
+                self.prsDict[count_prod] = self.productions[key].transition_to(production, count_prod)
+                count_prod += 1
+
+        for key, item in self.prsDict.items():
+            print(key, str(item), str(item.count))
 
         newInit = Grammar_Element(self.FirstState.value + "\'")
         lastState: Grammar_Element = Grammar_Element('$', terminal=True)
         self.tokens['$'] = lastState
-        self.firstProduct = newInit.transition_to([self.FirstState, lastState])
+        self.firstProduct = newInit.transition_to([self.FirstState, lastState], 1)
+        self.prsDict[1] = self.firstProduct
         self.FirstState = newInit
         self.productions[newInit.value] = newInit
 
@@ -122,41 +130,64 @@ class yaPar_reader:
                         newLR0 = lrsStates[newLR0]
                     state.transitions[symbol] = newLR0
 
-        draw_LR0(initState, 'AF', 'default')
+        self.LR0 = initState
 
         return initState
 
+    def graphLRO(self):
+        if self.LR0 is None:
+            self.LR0 = self.LROrganize()
+
+        draw_LR0(self.LR0, 'AF', 'default')
+        draw_LR0(self.LR0, 'AF', 'default', useNum=True)
+
+    def obtainGrammarElement(self, value):
+        if value in self.tokens:
+            return self.tokens[value]
+        return None
+
+    def getItem(self, value):
+        if value in self.prsDict:
+            return self.prsDict[value]
+        return None
+
     def getSLRTable(self):
-        self.action_table = pd.DataFrame(columns=[str(x) for x in self.symbols] + ['$'],
+        self.action_table = pd.DataFrame(columns=[str(x.value).strip() for x in self.symbols] + ['$'],
                                          index=[str(x) for x in range(len(self.lr0_states))])
         self.table_printG = self.action_table.copy()
 
         print('States LR0')
-        for num, state in self.lr0_states.items():
-            print(num, state)
 
         for num, state in self.lr0_states.items():
-            for st in state.state:
+            for item in state.non_completed_Ter:
+                term = item.poitElement()
+                if term.value == '$':
+                    self.action_table.at[str(num), '$'] = ('A', [])
+                    self.table_printG.at[str(num), '$'] = ('A', [])
+                    continue
+                self.action_table.at[str(num), str(term)] = ('S', state.transitions[term])
+                self.table_printG.at[str(num), str(term)] = 'S' + str(state.transitions[term].numState)
 
-                point_: Grammar_Element = st.poitElement()
-                if not point_ is None:
-                    if point_.value == '$':
-                        self.action_table.at[str(num), '$'] = 'A'
+            for item in state.non_completed_NonTer:
+                nonTerm = item.poitElement()
+                self.action_table.at[str(num), str(nonTerm.value).strip()] = ('Goto',state.transitions[nonTerm])
+                self.table_printG.at[str(num), str(nonTerm.value).strip()] = state.transitions[nonTerm].numState
+
+            for item in state.complete:
+                if item.original == self.firstProduct:
+                    continue
+
+                first = item.NonTerminal.follow
+                for f in first:
+                    if f.value == '$':
+                        self.action_table.at[str(num), '$'] = ('R', self.prsDict[item.count])
+                        self.table_printG.at[str(num), '$'] = 'R' + str(item.count)
                     else:
-                        if point_.value in self.tokens:
-                            self.action_table.at[str(num), point_.value] = (
-                                1, state.transitions[point_]
-                            )
-                            self.table_printG.at[str(num), point_.value] = 'S' + str(
-                                state.transitions[point_].numState) + ': ' + str(state.transitions[point_])
-                else:
-                    followA = st.followA
-                    for f in followA:
-                        self.action_table.at[str(num), f.value] = (
-                            2, st
-                        )
-                        self.table_printG.at[str(num), f.value] = 'R' + str(st) + ': ' + str(
-                            st)
+                        self.action_table.at[str(num), str(f)] = ('R', self.prsDict[item.count])
+                        self.table_printG.at[str(num), str(f)] = 'R' + str(item.count)
 
         print('table')
         print(tabulate.tabulate(self.table_printG, headers='keys', tablefmt='psql'))
+
+    def obtainAction(self, state, symbol):
+        return self.action_table.at[str(state), str(symbol)], self.table_printG.at[str(state), str(symbol)]
