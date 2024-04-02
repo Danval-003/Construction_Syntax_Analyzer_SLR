@@ -1,7 +1,7 @@
 import pandas as pd
 import tabulate
 
-from Machines_gen_usage.Classes_ import Grammar_Element, Production_Item, LRO_S
+from Machines_gen_usage.Classes_ import Grammar_Element, Production_Item, LRO_S, SLR_Table
 from Machines_gen_usage.Simulator import exclusiveSim
 from Machines_gen_usage.prepareAFD import *
 from Machines_gen_usage.Draw_diagrams import draw_LR0
@@ -9,6 +9,7 @@ from Machines_gen_usage.Draw_diagrams import draw_LR0
 
 class yaPar_reader:
     def __init__(self, content):
+        self.action_table2 = None
         self.table_printG: pd.DataFrame = pd.DataFrame()
         self.organize_list = None
         self.content = content
@@ -25,13 +26,14 @@ class yaPar_reader:
         self.lr0_states: Dict[int, LRO_S] = dict()
         self.LR0: LRO_S or None = None
         self.prsDict: Dict[int, Production_Item] = {}
+        self.prod_list_toPrint = ''
 
     def organize(self):
         organize_machine = import_module('yaPar_reader.py',
                                          {
                                              'TK_SECTION': ['%token ([A-Z]| )+', 'IGNORE ([A-Z]| )+'],
                                              'PRODUCTION': ['[a-z]+:([a-zA-Z]| |\n|\|)+;'],
-                                             'COMMENT': ['//.*\n', '/\*([^*/]|[^/]\*[^/])*\*/']
+                                             'COMMENT': ['//.*\n', '/\*([^*/]|[^/]\*[^/]|[^*]/[^*])*\*/']
                                          })
 
         self.organize_list = exclusiveSim(organize_machine, self.content)
@@ -79,13 +81,10 @@ class yaPar_reader:
                     elif p in self.productions:
                         production.append(self.productions[p])
                     else:
-                        raise Exception('Token not found in definition to production', key)
+                        raise Exception('Token not found in definition to production', key, p)
 
                 self.prsDict[count_prod] = self.productions[key].transition_to(production, count_prod)
                 count_prod += 1
-
-        for key, item in self.prsDict.items():
-            print(key, str(item), str(item.count))
 
         newInit = Grammar_Element(self.FirstState.value + "\'")
         lastState: Grammar_Element = Grammar_Element('$', terminal=True)
@@ -97,6 +96,11 @@ class yaPar_reader:
 
         self.FirstState.calculateFirst()
         self.FirstState.calculateFollow()
+        self.FirstState.resetFirstFollow()
+        for val in self.productions.values():
+            val.resetFirstFollow()
+            val.calculateFirst()
+            val.calculateFollow()
 
         # Organize the content
         return self.content
@@ -154,6 +158,7 @@ class yaPar_reader:
     def getSLRTable(self):
         self.action_table = pd.DataFrame(columns=[str(x.value).strip() for x in self.symbols] + ['$'],
                                          index=[str(x) for x in range(len(self.lr0_states))])
+        self.action_table2 = self.action_table.copy()
         self.table_printG = self.action_table.copy()
 
         print('States LR0')
@@ -163,14 +168,18 @@ class yaPar_reader:
                 term = item.poitElement()
                 if term.value == '$':
                     self.action_table.at[str(num), '$'] = ('A', [])
-                    self.table_printG.at[str(num), '$'] = ('A', [])
+                    self.action_table2.at[str(num), '$'] = ('A', [])
+                    self.table_printG.at[str(num), '$'] = "Accept!"
                     continue
-                self.action_table.at[str(num), str(term)] = ('S', state.transitions[term])
-                self.table_printG.at[str(num), str(term)] = 'S' + str(state.transitions[term].numState)
+                self.action_table.at[str(num), str(term.value)] = ('S', state.transitions[term])
+                self.action_table2.at[str(num), str(term.value)] = ('S', state.transitions[term].numState)
+                self.table_printG.at[str(num), str(term.value)] = 'S' + str(state.transitions[term].numState)
 
             for item in state.non_completed_NonTer:
                 nonTerm = item.poitElement()
-                self.action_table.at[str(num), str(nonTerm.value).strip()] = ('Goto',state.transitions[nonTerm])
+                self.action_table.at[str(num), str(nonTerm.value).strip()] = ('Goto', state.transitions[nonTerm])
+                self.action_table2.at[str(num), str(nonTerm.value).strip()] = (
+                    'Goto', state.transitions[nonTerm].numState)
                 self.table_printG.at[str(num), str(nonTerm.value).strip()] = state.transitions[nonTerm].numState
 
             for item in state.complete:
@@ -179,15 +188,20 @@ class yaPar_reader:
 
                 first = item.NonTerminal.follow
                 for f in first:
-                    if f.value == '$':
-                        self.action_table.at[str(num), '$'] = ('R', self.prsDict[item.count])
-                        self.table_printG.at[str(num), '$'] = 'R' + str(item.count)
-                    else:
-                        self.action_table.at[str(num), str(f)] = ('R', self.prsDict[item.count])
-                        self.table_printG.at[str(num), str(f)] = 'R' + str(item.count)
+                    self.action_table.at[str(num), str(f)] = ('R', self.prsDict[item.count])
+                    self.action_table2.at[str(num), str(f)] = ('R', (self.prsDict[item.count].NonTerminal.value,
+                                                                     len(self.prsDict[item.count].Result)))
+                    self.table_printG.at[str(num), str(f)] = 'R' + str(item.count)
 
         print('table')
         print(tabulate.tabulate(self.table_printG, headers='keys', tablefmt='psql'))
+        toIgnore: Set[str] = {elem.value for elem in self.tokens.values() if elem.ignore}
+        for key in sorted(self.prsDict.keys()):
+            item = self.prsDict[key]
+            print(key, str(item), str(item.count))
+            self.prod_list_toPrint += str(key) + ' ' + str(item) + '\n'
+        return SLR_Table(self.action_table2, self.table_printG, set(self.tokens.keys()), self.LR0.numState, toIgnore,
+                         product_list_toPrint=self.prod_list_toPrint)
 
     def obtainAction(self, state, symbol):
         return self.action_table.at[str(state), str(symbol)], self.table_printG.at[str(state), str(symbol)]

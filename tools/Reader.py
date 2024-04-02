@@ -5,12 +5,8 @@ from Machines_gen_usage.CharsSet import *
 def reader(filename: str) -> str:
     contents = []
     """Reads a file and returns its contents"""
-    with open(filename, 'r', encoding='utf-8') as archivo:
-        line = archivo.readlines()
-        for i in line:
-            contents.append(str(i[:-1]+' \n ' if i[-1] == '\n' or i[-1] == '' else i))
-
-    return ''.join(contents)
+    with open(filename, 'r') as archivo:
+        return archivo.read()
 
 
 def transformsChar(contents: List[str]) -> List[List[str or int]]:

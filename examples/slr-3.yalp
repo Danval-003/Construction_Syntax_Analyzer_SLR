@@ -7,13 +7,15 @@
 %token PLUS
 %token TIMES
 %token LPAREN RPAREN
+%token WHITESPACE
+IGNORE WHITESPACE
 
 expression:
     term PLUS expression
   | term
 ;
 term:
-    number TIMES term
-  | number
+    NUMBER TIMES term
+  | NUMBER
   | LPAREN expression RPAREN
 ;

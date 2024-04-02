@@ -1,0 +1,85 @@
+(* Lexer para Gramática No. 4 *)
+
+(* Introducir cualquier header aqui *)
+
+{
+parser.add_argument('-o', help='Output file', default='a.out')
+fileOut = parser.parse_args().o
+with open(fileOut, 'w') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("")
+}
+
+let delim = [' ''\t''\n']
+let ws = delim+
+let letter = ['A'-'Z''a'-'z']
+let str = (_)*
+let digit = ['0'-'9']
+let digits = digit+
+let id = letter(letter|str|digit)*
+let number = digits('.'digits)?('E'['+''-']?digits)?
+
+rule tokens =
+    ws
+  | id        {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("ID ")
+}              (* Cambie por una acción válida, que devuelva el token *)
+  | number    {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("NUMBER ")
+}
+  | ';'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("SEMICOLON ")
+ }
+  | ":="      {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("ASSIGNOP ")
+}
+  | '<'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("LT ")
+}
+  | '='       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("EQ ")
+}
+  | '+'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("PLUS ")
+}
+  | '-'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("MINUS ")
+}
+  | '*'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("TIMES ")
+}
+  | '/'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("DIV ")
+}
+  | '('       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("LPAREN ")
+}
+  | ')'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("RPAREN ")
+}
+
+(* Introducir cualquier trailer aqui *)

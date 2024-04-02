@@ -1,0 +1,21 @@
+# primer intento
+python .\yal.py .\examples\adaptativeSlr-1.yal -o .\scaner\out_tkl1.py
+python .\yapar.py .\examples\slr-1.yalp -o .\out\yaPar.pkl
+python .\compiler.py .\trys\try-1.txt -scan .\scaner\out_tkl1.py -oScan .\out\tokens.txt -yapar .\out\yaPar.pkl
+
+# segunda prueba
+python .\yal.py .\examples\adaptativeSlr-2.yal -o .\scaner\out_tkl2.py
+python .\yapar.py .\examples\slr-2.yalp -o .\out\yaPar2.pkl
+python .\compiler.py .\trys\try-2.txt -scan .\scaner\out_tkl2.py -oScan .\out\tokens2.txt -yapar .\out\yaPar2.pkl
+
+# tercera prueba
+python .\yal.py .\examples\adaptativeSlr-3.yal -o .\scaner\out_tkl3.py
+python .\yapar.py .\examples\slr-3.yalp -o .\out\yaPar3.pkl
+python .\compiler.py .\trys\try-3.txt -scan .\scaner\out_tkl3.py -oScan .\out\tokens3.txt -yapar .\out\yaPar3.pkl
+
+
+# cuarta prueba
+python .\yal.py .\examples\adaptativeSlr-4.yal -o .\scaner\out_tkl4.py
+python .\yapar.py .\examples\slr-4.yalp -o .\out\yaPar4.pkl
+python .\compiler.py .\trys\try-4.txt -scan .\scaner\out_tkl4.py -oScan .\out\tokens4.txt -yapar .\out\yaPar4.pkl
+

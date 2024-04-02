@@ -4,7 +4,6 @@ from typing import *
 import argparse
 parser = argparse.ArgumentParser(description='Simulate a machine')
 parser.add_argument('source', help='Source file')
-
 parser.add_argument('-o', help='Output file', default='a.out')
 fileOut = parser.parse_args().o
 with open(fileOut, 'w') as archivo:
@@ -47,10 +46,23 @@ class State:
 
 
 
+m1 = State('m1')
+l1 = State('l1')
+k1 = State('k1')
+j1 = State('j1')
+i1 = State('i1')
+h1 = State('h1')
+g1 = State('g1')
 f1 = State('f1')
+e2 = State('e2')
 e1 = State('e1')
 d1 = State('d1')
+c6 = State('c6')
 c1 = State('c1')
+c5 = State('c5')
+c2 = State('c2')
+c3 = State('c3')
+c4 = State('c4')
 b1 = State('b1')
 a1 = State('a1')
 a0 = State('a0')
@@ -109,10 +121,26 @@ a0.add_transition(119, b1)
 a0.add_transition(120, b1)
 a0.add_transition(121, b1)
 a0.add_transition(122, b1)
-a0.add_transition(43, c1)
-a0.add_transition(42, d1)
-a0.add_transition(40, e1)
-a0.add_transition(41, f1)
+a0.add_transition(48, c4)
+a0.add_transition(49, c4)
+a0.add_transition(50, c4)
+a0.add_transition(51, c4)
+a0.add_transition(52, c4)
+a0.add_transition(53, c4)
+a0.add_transition(54, c4)
+a0.add_transition(55, c4)
+a0.add_transition(56, c4)
+a0.add_transition(57, c4)
+a0.add_transition(59, d1)
+a0.add_transition(58, e1)
+a0.add_transition(60, f1)
+a0.add_transition(61, g1)
+a0.add_transition(43, h1)
+a0.add_transition(45, i1)
+a0.add_transition(42, j1)
+a0.add_transition(47, k1)
+a0.add_transition(40, l1)
+a0.add_transition(41, m1)
 
 a1.isFinalState = True
 
@@ -172,6 +200,7 @@ b1.add_transition(87, b1)
 b1.add_transition(88, b1)
 b1.add_transition(89, b1)
 b1.add_transition(90, b1)
+b1.add_transition(95, b1)
 b1.add_transition(97, b1)
 b1.add_transition(98, b1)
 b1.add_transition(99, b1)
@@ -199,16 +228,106 @@ b1.add_transition(120, b1)
 b1.add_transition(121, b1)
 b1.add_transition(122, b1)
 
-c1.isFinalState = True
+c4.isFinalState = True
 
 
-def tk_c1(): 
+def tk_c4(): 
 	with open(fileOut, 'a') as archivo:
 	    # Escribe datos en el archivo
-	    archivo.write("PLUS ")
+	    archivo.write("NUMBER ")
 
 
-c1.token = tk_c1
+c4.token = tk_c4
+c4.add_transition(69, c3)
+c4.add_transition(46, c1)
+c4.add_transition(48, c4)
+c4.add_transition(49, c4)
+c4.add_transition(50, c4)
+c4.add_transition(51, c4)
+c4.add_transition(52, c4)
+c4.add_transition(53, c4)
+c4.add_transition(54, c4)
+c4.add_transition(55, c4)
+c4.add_transition(56, c4)
+c4.add_transition(57, c4)
+
+c3.add_transition(43, c2)
+c3.add_transition(45, c2)
+c3.add_transition(48, c5)
+c3.add_transition(49, c5)
+c3.add_transition(50, c5)
+c3.add_transition(51, c5)
+c3.add_transition(52, c5)
+c3.add_transition(53, c5)
+c3.add_transition(54, c5)
+c3.add_transition(55, c5)
+c3.add_transition(56, c5)
+c3.add_transition(57, c5)
+
+c2.add_transition(48, c5)
+c2.add_transition(49, c5)
+c2.add_transition(50, c5)
+c2.add_transition(51, c5)
+c2.add_transition(52, c5)
+c2.add_transition(53, c5)
+c2.add_transition(54, c5)
+c2.add_transition(55, c5)
+c2.add_transition(56, c5)
+c2.add_transition(57, c5)
+
+c5.isFinalState = True
+
+
+def tk_c5(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("NUMBER ")
+
+
+c5.token = tk_c5
+c5.add_transition(48, c5)
+c5.add_transition(49, c5)
+c5.add_transition(50, c5)
+c5.add_transition(51, c5)
+c5.add_transition(52, c5)
+c5.add_transition(53, c5)
+c5.add_transition(54, c5)
+c5.add_transition(55, c5)
+c5.add_transition(56, c5)
+c5.add_transition(57, c5)
+
+c1.add_transition(48, c6)
+c1.add_transition(49, c6)
+c1.add_transition(50, c6)
+c1.add_transition(51, c6)
+c1.add_transition(52, c6)
+c1.add_transition(53, c6)
+c1.add_transition(54, c6)
+c1.add_transition(55, c6)
+c1.add_transition(56, c6)
+c1.add_transition(57, c6)
+
+c6.isFinalState = True
+
+
+def tk_c6(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("NUMBER ")
+
+
+c6.token = tk_c6
+c6.add_transition(69, c3)
+c6.add_transition(48, c6)
+c6.add_transition(49, c6)
+c6.add_transition(50, c6)
+c6.add_transition(51, c6)
+c6.add_transition(52, c6)
+c6.add_transition(53, c6)
+c6.add_transition(54, c6)
+c6.add_transition(55, c6)
+c6.add_transition(56, c6)
+c6.add_transition(57, c6)
 
 d1.isFinalState = True
 
@@ -216,21 +335,23 @@ d1.isFinalState = True
 def tk_d1(): 
 	with open(fileOut, 'a') as archivo:
 	    # Escribe datos en el archivo
-	    archivo.write("TIMES ")
+	    archivo.write("SEMICOLON ")
 
 
 d1.token = tk_d1
 
-e1.isFinalState = True
+e1.add_transition(61, e2)
+
+e2.isFinalState = True
 
 
-def tk_e1(): 
+def tk_e2(): 
 	with open(fileOut, 'a') as archivo:
 	    # Escribe datos en el archivo
-	    archivo.write("LPAREN ")
+	    archivo.write("ASSIGNOP ")
 
 
-e1.token = tk_e1
+e2.token = tk_e2
 
 f1.isFinalState = True
 
@@ -238,10 +359,87 @@ f1.isFinalState = True
 def tk_f1(): 
 	with open(fileOut, 'a') as archivo:
 	    # Escribe datos en el archivo
-	    archivo.write("RPAREN ")
+	    archivo.write("LT ")
 
 
 f1.token = tk_f1
+
+g1.isFinalState = True
+
+
+def tk_g1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("EQ ")
+
+
+g1.token = tk_g1
+
+h1.isFinalState = True
+
+
+def tk_h1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("PLUS ")
+
+
+h1.token = tk_h1
+
+i1.isFinalState = True
+
+
+def tk_i1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("MINUS ")
+
+
+i1.token = tk_i1
+
+j1.isFinalState = True
+
+
+def tk_j1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("TIMES ")
+
+
+j1.token = tk_j1
+
+k1.isFinalState = True
+
+
+def tk_k1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("DIV ")
+
+
+k1.token = tk_k1
+
+l1.isFinalState = True
+
+
+def tk_l1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("LPAREN ")
+
+
+l1.token = tk_l1
+
+m1.isFinalState = True
+
+
+def tk_m1(): 
+	with open(fileOut, 'a') as archivo:
+	    # Escribe datos en el archivo
+	    archivo.write("RPAREN ")
+
+
+m1.token = tk_m1
 
 
 args = parser.parse_args()

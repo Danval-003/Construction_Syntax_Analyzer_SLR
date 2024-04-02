@@ -1,6 +1,8 @@
-(* Lexer para Gramática No. 1 - Expresiones aritméticas simples para variables *)
+(* Lexer para Gramática No. 3 - Variación expresiones aritméticas simples *)
 
 (* Introducir cualquier header aqui *)
+
+
 {
 
 parser.add_argument('-o', help='Output file', default='a.out')
@@ -13,17 +15,21 @@ with open(fileOut, 'w') as archivo:
 
 let delim = [' ''\t''\n']
 let ws = delim+
-let letter = ['A'-'Z''a'-'z']
-let digit = ['0'-'9']
-let id = letter(letter|digit)*
+let digit = ["0123456789"]
+let digits = digit+
+let number = digits('.'digits)?('E'['+''-']?digits)?
 
 rule tokens =
-    ws
-  | id        {
+    ws        {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
-    archivo.write("ID ")
- }               (* Cambie por una acción válida, que devuelva el token *)
+    archivo.write("WHITESPACE ")
+}               (* Cambie por una acción válida, que devuelva el token *)
+  | number    {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("NUMBER ")
+}
   | '+'       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
@@ -38,7 +44,7 @@ with open(fileOut, 'a') as archivo:
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
     archivo.write("LPAREN ")
-  }
+}
   | ')'       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
@@ -46,6 +52,3 @@ with open(fileOut, 'a') as archivo:
 }
 
 (* Introducir cualquier trailer aqui *)
-
-
-

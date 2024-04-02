@@ -48,4 +48,3 @@ with open(fileOut, 'a') as archivo:
 (* Introducir cualquier trailer aqui *)
 
 
-

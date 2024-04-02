@@ -29,9 +29,7 @@ def eval_Text(text):
     clear()
     # Tu lógica de evaluación aquí
     # Se asume que `exclusiveSim` y `machine` están definidos
-    print(machine)
     evaluate_text = exclusiveSim(machine, text)[:-1]
-    print('EVALUATE_TEXT', evaluate_text)
     new_eval = []
     passRules = False
 
@@ -62,7 +60,6 @@ def eval_Text(text):
                 if '\{' in message or '\}' in message:
                     for h in head:
                         orderPy.append(h.replace('\{', '{').replace('\}', '}'))
-                    print('HEADER', message)
                     sepToEscapePre = message.split('\{')
                     sepToEscape = []
                     for sep in sepToEscapePre:
@@ -111,11 +108,9 @@ def eval_Text(text):
             total_machines[function_name] = {}
             lastMachine = function_name
             isFirst = False
-            print(total_machines, lastMachine)
 
         new_eval.append((message, token))
 
-    print(new_eval, 'NEW_EVALWW')
 
     return [(message, token) for message, token in new_eval]
 
@@ -145,7 +140,6 @@ def Eval_declaration(declaration):
     valEval, _ = eval_Value(nameVar, valueVar)
     for message, token in valEval:
         new_eval.append((message, token))
-    print(new_eval, 'NEW_EVAL')
 
     return [(message, token) for message, token in new_eval]
 
@@ -189,7 +183,6 @@ def clear():
 def eval_Value(var, value, notDo=False):
     global dictVar
     global machineValue
-    print(value)
 
     def group(val):
         new_eval = []
@@ -226,21 +219,17 @@ def eval_Value(var, value, notDo=False):
                 develText.append((textNow, 1))
             return develText
 
-        print(ev, 'EV')
 
         if len(ev) == 0:
             return [(val, 1)], '', True
 
         operation = ''
         error = False
-        print(ev, 'EV')
 
         for message, token in ev:
             if token != 1 and token != 0:
                 if token == 'IN_GROUP':
-                    print("IN_GROUP", message)
                     divideG = divideGroup(message)
-                    print(divideG, 'DIVIDE')
                     for mD, tD in divideG:
                         if tD != 1:
                             if tD == 'GROUP':
@@ -249,8 +238,6 @@ def eval_Value(var, value, notDo=False):
                                     new_eval.append((message, 1))
                                     continue
                                 n, o, e = group(toGroup)
-                                print(n, o, e, 'GROUP')
-                                print(toGroup, 'TOGROUP')
                                 if e:
                                     error = True
                                 operation += '(' + o + ')'
@@ -260,8 +247,6 @@ def eval_Value(var, value, notDo=False):
                                 new_eval.append((')', 0))
                             else:
                                 n, o, e = group(mD)
-                                print(n, o, e, 'GROUP')
-                                print(mD, 'TOGROUP')
                                 if e:
                                     error = True
                                 operation += o
@@ -279,7 +264,6 @@ def eval_Value(var, value, notDo=False):
                     if inSet[-1][1] != 1:
                         inSet = inSet[:-1]
                     new_eval.append(('[', 0))
-                    print(inSet, 'INSET')
                     operation += '['
                     for m, t in inSet:
                         if t == 'IND' or t == 'GROUP':
@@ -348,11 +332,10 @@ def eval_Value(var, value, notDo=False):
     new_ev, op, er = group(value.replace(r'\n', '\n').replace(r'\t', '\t').replace(r'\v', '\v'))
 
     if er:
-        print('ERROR EN LA EXPRESION', value)
+        raise Exception('ERROR EN LA EXPRESION', value)
     else:
         if value != '' and not notDo:
             dictVar[var] = op
-            print('EXPRESION', op)
             rg = {var: [var]}
             newMachine = prepareAFN(rg)
             machineValue.combine_States(newMachine)
@@ -381,9 +364,8 @@ def Eval_tokens(token):
         if type == 'TOKEN':
             if tokenName == '':
                 tokenName = "print('"+comp.strip().replace("'", '"')+"')"
-            print(comp, type, 'TOKEN')
             regexDescription += eval_Value(var='', value=comp, notDo=True)[1]
-            print(regexDescription, 'REGEX')
+
         if type == 'RETURN':
             tokenName = comp[1:-1]
             tkS = ''
@@ -400,28 +382,34 @@ def Eval_tokens(token):
     return [(message, token) for message, token in new_eval]
 
 
-def create_mach():
+def create_mach(draws_machine=True, defect_file:str = ''):
     global total_machines, orderPy
     if len(total_machines) == 0:
         return
 
     cout = 2
-    print(total_machines, 'TOTALES')
 
     code = ''
+    headerC = ''
 
     for i in orderPy:
-        code += i + "\n"
+        headerC += i + "\n"
+
+    codes = []
 
     for machine in total_machines:
-        mach = prepareAFN(total_machines[machine], True)
-        code += translateToCode(mach, True)
-        with open("./scaner/out_" + str(machine) + ".py", 'w', encoding='utf-8') as fileW:
+        mach = prepareAFN(total_machines[machine], draws_machine)
+        code += translateToCode(mach, True, headerC)
+        fileName = "./scaner/out_" + str(machine) + ".py" if defect_file == '' else defect_file
+        defect_file = ''
+        with open(fileName, 'w', encoding='utf-8') as fileW:
             fileW.write(code)
         cout += 1
-        draw_AF(mach, legend=machine, expression=machine, name='Machine', useNum=True)
+        codes.append(fileName)
+        if draws_machine:
+            draw_AF(mach, legend=machine, expression=machine, name='Machine', useNum=True)
 
-    return list(total_machines.keys())[0]
+    return codes
 
 
 def getTotal():

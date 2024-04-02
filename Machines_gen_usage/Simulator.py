@@ -155,8 +155,4 @@ def exclusiveSim(initState: State, string: str):
         listTextTuple.append((text[:-1], 1))
         listTextTuple.append((' ', 0))
 
-    for line, token in listTextTuple:
-        if token == 1:
-            err.generalError(line, 'Token no reconocido')
-
     return listTextTuple

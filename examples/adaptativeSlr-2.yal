@@ -1,6 +1,7 @@
-(* Lexer para Gramática No. 1 - Expresiones aritméticas simples para variables *)
+(* Lexer para Gramática No. 2 - Expresiones aritméticas extendidas *)
 
 (* Introducir cualquier header aqui *)
+
 {
 
 parser.add_argument('-o', help='Output file', default='a.out')
@@ -10,35 +11,55 @@ with open(fileOut, 'w') as archivo:
     archivo.write("")
 }
 
-
-let delim = [' ''\t''\n']
+let delim = ["\s\t\n"]
 let ws = delim+
 let letter = ['A'-'Z''a'-'z']
 let digit = ['0'-'9']
+let digits = digit+
 let id = letter(letter|digit)*
+let number = digits('.'digits)?('E'['+''-']?digits)?
 
 rule tokens =
-    ws
+    ws        {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("WS ")
+}        (* Cambie por una acción válida, que devuelva el token *)
   | id        {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
     archivo.write("ID ")
- }               (* Cambie por una acción válida, que devuelva el token *)
+}
+  | number    {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("NUMBER ")
+}
   | '+'       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
     archivo.write("PLUS ")
+}
+  | '-'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("MINUS ")
 }
   | '*'       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
     archivo.write("TIMES ")
 }
+  | '/'       {
+with open(fileOut, 'a') as archivo:
+    # Escribe datos en el archivo
+    archivo.write("DIV ")
+}
   | '('       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
     archivo.write("LPAREN ")
-  }
+}
   | ')'       {
 with open(fileOut, 'a') as archivo:
     # Escribe datos en el archivo
@@ -46,6 +67,3 @@ with open(fileOut, 'a') as archivo:
 }
 
 (* Introducir cualquier trailer aqui *)
-
-
-

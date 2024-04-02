@@ -1,6 +1,9 @@
 from typing import *
 from typing import Tuple, List, Any
 
+import pandas as pd
+import tabulate
+
 
 class Node:
     def __init__(self, value: str or int, left: 'Node' or None = None, right: 'Node' or None = None,
@@ -169,6 +172,18 @@ class Grammar_Element:
                 if elem.epsilon:
                     self.epsilon = self.epsilon and True
                     break
+
+        newPr = production.copy()
+        while len(newPr) > 0:
+            elem = newPr.pop(0)
+            if elem.terminal:
+                self.first.add(elem)
+                break
+            else:
+                if not elem.epsilon:
+                    break
+
+
         product = Production_Item(self, production, count_proud=count_prod)
         self.transition.add(product)
         self.firstCalculated.append(product)
@@ -188,7 +203,7 @@ class Grammar_Element:
                     self.first.add(elem)
                 else:
                     elem.calculateFirst()
-                    self.first = self.first.union(elem.first)
+                    self.first = self.first | elem.first
 
         return self.first
 
@@ -208,7 +223,17 @@ class Grammar_Element:
                 if not elem.terminal:
                     elem.calculateFollow()
 
+        for pr in self.transition:
+            last = pr.Result[-1]
+            if not last.terminal:
+                last.follow = last.follow.union(self.follow)
+
         return self.follow
+
+    def resetFirstFollow(self):
+        for pr in self.transition:
+            self.firstCalculated.append(pr)
+            self.followCalculated.append(pr)
 
     def __eq__(self, other):
         """Define la igualdad entre dos instancias de la clase."""
@@ -392,3 +417,27 @@ class LRO_S:
 
     def __str__(self):
         return f"{self.numState}\n" + '\n'.join([i.__str__() for i in self.state])
+
+
+class SLR_Table:
+    def __init__(self, table: pd.DataFrame, tablePrint: pd.DataFrame, tokens: Set[str],
+                 FirstState: int, tokensToIgnore: Set[str], product_list_toPrint: str = '') -> None:
+        self.table: pd.DataFrame = table
+        self.tablePrint: pd.DataFrame = tablePrint
+        self.tokens: Set[str] = tokens
+        self.firstState: int = FirstState
+        self.tokensToIgnore: Set[str] = tokensToIgnore
+        self.product_list_toPrint: str = product_list_toPrint
+
+    def obtainAction(self, state, symbol):
+        return self.table.at[str(state), str(symbol)], self.tablePrint.at[str(state), str(symbol)]
+
+    def obtainGrammarElement(self, value):
+        if value in self.tokens:
+            if value in self.tokensToIgnore:
+                return 2
+            return 0
+        return 1
+
+    def __str__(self):
+        return tabulate.tabulate(self.tablePrint, headers='keys', tablefmt='psql')

@@ -11,7 +11,6 @@ from queue import Queue
 
 
 def create_mach(token, regex, count, resultQueue: Queue, TreeQueue: Queue):
-    print(f'Creating machine for {token}')
     parsed: List[List[str or int]] = transformsChar(regex)
     accepted: List[List[str or int]] = validate(parsed)
     alphabets: List[Set[int]] = extract_alphabet(accepted)
@@ -74,7 +73,7 @@ def prepareAFN(expressions: Dict[str, List[str]], showTree = False) -> State:
     return initState
 
 
-def translateToCode(initState: State, isOut: bool = False) -> str:
+def translateToCode(initState: State, isOut: bool = False, header='') -> str:
     code = ''
     setStates: Dict[str, State] = {initState.value: initState}
 
@@ -142,13 +141,20 @@ class State:
     def numberTransitions(self) -> int:
         return self.numTrans
         
-        
+
 \n\n""" + code
+
+        code = """
+import argparse
+parser = argparse.ArgumentParser(description='Simulate a machine')
+parser.add_argument('source', help='Source file')"""+header + code
 
         code = f"from typing import *\n\n" + code
 
 
         code += r"""
+args = parser.parse_args()
+fileToRead = args.source
 def exclusiveSim(initState: State, string: str):
     string += ' '
     paths: List[List[State]] = [[initState]]
@@ -215,11 +221,8 @@ BOLD = '\033[1m'
 UNDERLINE = '\033[4m'
 REVERSE = '\033[7m'
 
+
 if __name__ == '__main__':
-    print(CYAN, 'Cual es el mensaje a evaluar?', RESET)
-
-    fileToRead = input()
-
     with open(fileToRead, 'r') as file:
         contents = file.read()
 
