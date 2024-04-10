@@ -102,6 +102,9 @@ class yaPar_reader:
             val.calculateFirst()
             val.calculateFollow()
 
+        for pr in self.productions.values():
+            print(pr.value,'-> First: ' ,{x.value for x in pr.first}, 'Follow:', {x.value for x in pr.follow})
+
         # Organize the content
         return self.content
 

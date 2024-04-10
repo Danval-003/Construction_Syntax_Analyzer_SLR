@@ -3,243 +3,71 @@ digraph {
 	rankdir=LR
 	label=AF
 	0 [label="0
-a -> . ID ASSIGNOP e
-m -> . a
-p -> . t
-p' -> . p $
-t -> . m
-t -> . m q" shape=circle]
+expression -> . term
+expression -> . expression PLUS term
+expression' -> . expression $
+factor -> . ID
+factor -> . LPAREN expression RPAREN
+term -> . factor
+term -> . term TIMES factor" shape=circle]
 	1 [label="1
-a -> ID . ASSIGNOP e" shape=circle]
+expression -> expression . PLUS term
+expression' -> expression . $" shape=doublecircle]
 	6 [label="6
-a -> ID ASSIGNOP . e
-e -> . x
-e -> . x z
-f -> . ID
-f -> . NUMBER
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-x -> . r
-x -> . r w" shape=circle]
-	9 [label="9
-f -> ID ." shape=circle]
-	6 -> 9 [label=ID]
-	10 [label="10
-w -> . y
-w -> . y w
-x -> r .
-x -> r . w
-y -> . PLUS r
-y -> . MINUS r" shape=circle]
-	17 [label="17
-f -> . ID
-f -> . NUMBER
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-y -> MINUS . r" shape=circle]
-	17 -> 9 [label=ID]
-	30 [label="30
-y -> MINUS r ." shape=circle]
-	17 -> 30 [label=r]
-	11 [label="11
-e -> . x
-e -> . x z
-f -> . ID
-f -> . NUMBER
-f -> LPAREN . e RPAREN
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-x -> . r
-x -> . r w" shape=circle]
-	11 -> 9 [label=ID]
-	11 -> 10 [label=r]
-	11 -> 11 [label=LPAREN]
-	12 [label="12
-e -> x .
-e -> x . z
-z -> . EQ x
-z -> . LT x" shape=circle]
-	22 [label="22
-f -> . ID
-f -> . NUMBER
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-x -> . r
-x -> . r w
-z -> LT . x" shape=circle]
-	22 -> 9 [label=ID]
-	22 -> 10 [label=r]
-	22 -> 11 [label=LPAREN]
-	34 [label="34
-z -> LT x ." shape=circle]
-	22 -> 34 [label=x]
-	13 [label="13
-f -> NUMBER ." shape=circle]
-	22 -> 13 [label=NUMBER]
-	14 [label="14
-j -> . DIV f
-j -> . TIMES f
-r -> f .
-r -> f . v
-v -> . j
-v -> . j v" shape=circle]
-	25 [label="25
-f -> . NUMBER
-f -> . ID
-f -> . LPAREN e RPAREN
-j -> TIMES . f" shape=circle]
-	25 -> 9 [label=ID]
-	25 -> 11 [label=LPAREN]
-	25 -> 13 [label=NUMBER]
-	36 [label="36
-j -> TIMES f ." shape=circle]
-	25 -> 36 [label=f]
-	14 -> 25 [label=TIMES]
-	26 [label="26
-j -> . DIV f
-j -> . TIMES f
-v -> j .
-v -> . j
-v -> j . v
-v -> . j v" shape=circle]
-	26 -> 25 [label=TIMES]
-	26 -> 26 [label=j]
-	37 [label="37
-v -> j v ." shape=circle]
-	26 -> 37 [label=v]
-	28 [label="28
-f -> . NUMBER
-f -> . ID
-f -> . LPAREN e RPAREN
-j -> DIV . f" shape=circle]
-	28 -> 9 [label=ID]
-	28 -> 11 [label=LPAREN]
-	28 -> 13 [label=NUMBER]
-	38 [label="38
-j -> DIV f ." shape=circle]
-	28 -> 38 [label=f]
-	26 -> 28 [label=DIV]
-	14 -> 26 [label=j]
-	27 [label="27
-r -> f v ." shape=circle]
-	14 -> 27 [label=v]
-	14 -> 28 [label=DIV]
-	22 -> 14 [label=f]
-	12 -> 22 [label=LT]
-	23 [label="23
-f -> . ID
-f -> . NUMBER
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-x -> . r
-x -> . r w
-z -> EQ . x" shape=circle]
-	23 -> 9 [label=ID]
-	23 -> 10 [label=r]
-	23 -> 11 [label=LPAREN]
-	35 [label="35
-z -> EQ x ." shape=circle]
-	23 -> 35 [label=x]
-	23 -> 13 [label=NUMBER]
-	23 -> 14 [label=f]
-	12 -> 23 [label=EQ]
-	24 [label="24
-e -> x z ." shape=circle]
-	12 -> 24 [label=z]
-	11 -> 12 [label=x]
-	11 -> 13 [label=NUMBER]
-	11 -> 14 [label=f]
-	21 [label="21
-f -> LPAREN e . RPAREN" shape=circle]
-	33 [label="33
-f -> LPAREN e RPAREN ." shape=circle]
-	21 -> 33 [label=RPAREN]
-	11 -> 21 [label=e]
-	17 -> 11 [label=LPAREN]
-	17 -> 13 [label=NUMBER]
-	17 -> 14 [label=f]
-	10 -> 17 [label=MINUS]
-	18 [label="18
-w -> . y
-w -> y .
-w -> y . w
-w -> . y w
-y -> . PLUS r
-y -> . MINUS r" shape=circle]
-	18 -> 17 [label=MINUS]
-	18 -> 18 [label=y]
-	31 [label="31
-w -> y w ." shape=circle]
-	18 -> 31 [label=w]
-	20 [label="20
-f -> . ID
-f -> . NUMBER
-f -> . LPAREN e RPAREN
-r -> . f
-r -> . f v
-y -> PLUS . r" shape=circle]
-	20 -> 9 [label=ID]
-	32 [label="32
-y -> PLUS r ." shape=circle]
-	20 -> 32 [label=r]
-	20 -> 11 [label=LPAREN]
-	20 -> 13 [label=NUMBER]
-	20 -> 14 [label=f]
-	18 -> 20 [label=PLUS]
-	10 -> 18 [label=y]
-	19 [label="19
-x -> r w ." shape=circle]
-	10 -> 19 [label=w]
-	10 -> 20 [label=PLUS]
-	6 -> 10 [label=r]
-	6 -> 11 [label=LPAREN]
-	6 -> 12 [label=x]
-	6 -> 13 [label=NUMBER]
-	6 -> 14 [label=f]
-	15 [label="15
-a -> ID ASSIGNOP e ." shape=circle]
-	6 -> 15 [label=e]
-	1 -> 6 [label=ASSIGNOP]
-	0 -> 1 [label=ID]
+expression -> expression PLUS . term
+factor -> . ID
+factor -> . LPAREN expression RPAREN
+term -> . factor
+term -> . term TIMES factor" shape=circle]
 	2 [label="2
-p' -> p . $" shape=doublecircle]
-	0 -> 2 [label=p]
+factor -> ID ." shape=circle]
+	6 -> 2 [label=ID]
 	3 [label="3
-p -> t ." shape=circle]
-	0 -> 3 [label=t]
-	4 [label="4
-q -> . SEMICOLON m
-q -> . SEMICOLON m q
-t -> m .
-t -> m . q" shape=circle]
+expression -> . term
+expression -> . expression PLUS term
+factor -> . ID
+factor -> LPAREN . expression RPAREN
+factor -> . LPAREN expression RPAREN
+term -> . factor
+term -> . term TIMES factor" shape=circle]
 	7 [label="7
-t -> m q ." shape=circle]
-	4 -> 7 [label=q]
+expression -> expression . PLUS term
+factor -> LPAREN expression . RPAREN" shape=circle]
+	10 [label="10
+factor -> LPAREN expression RPAREN ." shape=circle]
+	7 -> 10 [label=RPAREN]
+	7 -> 6 [label=PLUS]
+	3 -> 7 [label=expression]
+	3 -> 2 [label=ID]
+	3 -> 3 [label=LPAREN]
+	4 [label="4
+expression -> term .
+term -> term . TIMES factor" shape=circle]
 	8 [label="8
-a -> . ID ASSIGNOP e
-m -> . a
-q -> SEMICOLON . m
-q -> SEMICOLON . m q" shape=circle]
-	8 -> 1 [label=ID]
-	16 [label="16
-q -> SEMICOLON m .
-q -> . SEMICOLON m
-q -> SEMICOLON m . q
-q -> . SEMICOLON m q" shape=circle]
-	29 [label="29
-q -> SEMICOLON m q ." shape=circle]
-	16 -> 29 [label=q]
-	16 -> 8 [label=SEMICOLON]
-	8 -> 16 [label=m]
+factor -> . ID
+factor -> . LPAREN expression RPAREN
+term -> term TIMES . factor" shape=circle]
+	8 -> 2 [label=ID]
+	8 -> 3 [label=LPAREN]
+	11 [label="11
+term -> term TIMES factor ." shape=circle]
+	8 -> 11 [label=factor]
+	4 -> 8 [label=TIMES]
+	3 -> 4 [label=term]
 	5 [label="5
-m -> a ." shape=circle]
-	8 -> 5 [label=a]
-	4 -> 8 [label=SEMICOLON]
-	0 -> 4 [label=m]
-	0 -> 5 [label=a]
+term -> factor ." shape=circle]
+	3 -> 5 [label=factor]
+	6 -> 3 [label=LPAREN]
+	9 [label="9
+expression -> expression PLUS term .
+term -> term . TIMES factor" shape=circle]
+	9 -> 8 [label=TIMES]
+	6 -> 9 [label=term]
+	6 -> 5 [label=factor]
+	1 -> 6 [label=PLUS]
+	0 -> 1 [label=expression]
+	0 -> 2 [label=ID]
+	0 -> 3 [label=LPAREN]
+	0 -> 4 [label=term]
+	0 -> 5 [label=factor]
 }
