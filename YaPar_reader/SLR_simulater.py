@@ -23,18 +23,30 @@ def SLR_simulate(content:str, reader: 'SLR_Table'):
 
     stateStack: List[int] = [reader.firstState]
     df_stack = {}
+    actionsStack = []
 
     while True:
         stateOn = stateStack[-1]
         actualToken = contentTokens[0]
         action, desc = reader.obtainAction(stateOn, actualToken)
-        df_stack['State'] = [str(st) for st in stateStack]
+        stateToPrint = [str(st) for st in stateStack]
+        stateToPrint.reverse()
+        df_stack['State'] = stateToPrint
         df_stack['Input'] = [str(tk) for tk in contentTokens]
         df_stack['Action'] = [desc if not pd.isna(desc) else 'Error!']
         print(tabulate.tabulate(df_stack, headers='keys', tablefmt='psql'))
 
         if pd.isna(action) or action is None:
+            d = reader.tablePrint.loc[str(stateOn)].notna()
+            k = reader.tablePrint.columns[d].tolist()
             print('\033[91m', 'Reject!', '\033[0m')
+            print()
+            print('\033[96m', "Expected...", '\033[0m')
+            for exp in k:
+                if exp.islower():
+                    continue
+                print('\033[93m', exp, '\033[0m')
+            print()
             raise Exception('Error!, not accepted')
         if action[0] == 'S':
             stateStack.append(action[1])
